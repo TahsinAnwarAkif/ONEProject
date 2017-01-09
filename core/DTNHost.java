@@ -427,6 +427,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	 */
 	public void sendMessage(String id, DTNHost to) {
 		
+            System.out.println("SEND!");
             /*
             int n;
             n = Array.getLength(MaliciousNodes);
@@ -435,7 +436,6 @@ public class DTNHost implements Comparable<DTNHost> {
                 if (MaliciousNodes[i] == to)return;
             }
             */
-            if (this.getAddress() == 4) return;
             this.router.sendMessage(id, to);
 	}
 
@@ -493,7 +493,8 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * {@link MessageRouter#receiveMessage(Message, DTNHost)}
 	 */
         public int receiveMessage(Message m, DTNHost from) {
-		int retVal = this.router.receiveMessage(m, from); 
+		System.out.println("RECEIVE!");
+                int retVal = this.router.receiveMessage(m, from); 
                // MsgInfo.put(m, );
                 
                 DTNHost to = this.router.getHost();
@@ -508,6 +509,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 
                 sortMsgInfo(from);
                 sortMsgInfo(to);
+                
                 
                 if (retVal == MessageRouter.RCV_OK) {
 			m.addNodeOnPath(this);	// add this node on the messages path
