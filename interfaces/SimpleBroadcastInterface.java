@@ -86,7 +86,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 	 */
 	public void update() {
 		// First break the old ones
-		 System.out.println("UPDATE!");
+		System.out.println("UPDATE!");
                 optimizer.updateLocation(this);
 		for (int i=0; i<this.connections.size(); ) {
 			Connection con = this.connections.get(i);
@@ -95,8 +95,15 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 			// all connections should be up at this stage
 			assert con.isUp() : "Connection " + con + " was down!";
                         
+                        int f = 0;
+                        for(int j = 0; j < MaliciousNodes.length; j++)
+                                {
+                                    if (anotherInterface.getHost().getAddress() == this.host.MaliciousNodes[j])
+                                        f = 1;
                         
-			if (!isWithinRange(anotherInterface) || anotherInterface.getHost().getAddress() == 4) {
+                                }
+			
+                        if (!isWithinRange(anotherInterface) || f == 1  ) {
 				disconnect(con,anotherInterface);
 				connections.remove(i);
 			}
@@ -130,7 +137,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 		
                 if (!isConnected(anotherInterface) && (this != anotherInterface)) {    			
 			// connection speed is the lower one of the two speeds
-                        if (anotherInterface.getHost().getAddress() == 4)return;
+                        //if (anotherInterface.getHost().getAddress() == 4)return;
 			int conSpeed = anotherInterface.getTransmitSpeed();
 			if (conSpeed > this.transmitSpeed) {
 				conSpeed = this.transmitSpeed; 
