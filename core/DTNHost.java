@@ -4,6 +4,7 @@
  */
 package core;
 
+
 import static java.awt.PageAttributes.MediaType.A;
 import static java.awt.PageAttributes.MediaType.B;
 import java.lang.reflect.Array;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import static junit.runner.Version.id;
+import static java.lang.Double.POSITIVE_INFINITY;
 
 import movement.MovementModel;
 import movement.Path;
@@ -48,9 +50,9 @@ public class DTNHost implements Comparable<DTNHost> {
 	private List<NetworkInterface> net;
 	private ModuleCommunicationBus comBus;
         
-        public static ArrayList NodeInfo;
-        public static int[] MaliciousNodes;
-        public static ArrayList MsgInfo;
+        public   ArrayList NodeInfo;
+        public   int[] MaliciousNodes;
+        public   ArrayList MsgInfo;
   
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
@@ -516,25 +518,138 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @return The value returned by 
 	 * {@link MessageRouter#receiveMessage(Message, DTNHost)}
 	 */
+         //UPDATING A DTNHOST
+        public static void NodeInfoUpdate(DTNHost n)
+        {
+         DTNHost[] src = new DTNHost[1000]; 
+         DTNHost[] dest= new DTNHost[1000];
+         int flag1 = 0,flag2 = 0;
+         
+         DTNHost[] node = new DTNHost[1000]; 
+         int[]     FTT  = new int[1000];
+         int[]     RTT  = new int[1000];
+         double[]  Ratio= new double[1000];
+         
+         for(int i = 0; i <n.MsgInfo.size(); i++)
+            {
+                ArrayList tmp =(ArrayList)n.MsgInfo.get(i);
+                src[i]        = (DTNHost)tmp.get(1);
+                dest[i]       = (DTNHost)tmp.get(2);
+            }
+         for(int i = 0; i <n.NodeInfo.size(); i++)
+            {
+                ArrayList  tmp     =(ArrayList)n.NodeInfo.get(i);
+                           
+                           node[i] =(DTNHost)tmp.get(0); 
+                           FTT[i]  =(int) tmp.get(1);
+                           RTT[i]  =(int) tmp.get(2);
+                           Ratio[i]=(int) tmp.get(3);
+                
+                if(src[i] == node[i])
+                    {
+                        
+                        Ratio[i] = (double)((FTT[i]+1)/RTT[i]);
+                        
+                        tmp.set(1,FTT[i]+1);
+                        tmp.set(3,Ratio[i]);    
+                    }
+                else 
+                    {
+                        ArrayList tmp2 = new ArrayList();
+                        
+                        tmp2.add(src[i]);
+                        tmp2.add(1);
+                        tmp2.add(0);
+                        tmp2.add(POSITIVE_INFINITY);
+                        
+                        n.NodeInfo.add(tmp2);
+                
+                    }
+                
+                if(dest[i] == node[i])
+                    {
+                        Ratio[i] = (double)(FTT[i]/(RTT[i]+1));
+                        
+                        tmp.set(2,RTT[i]+1);
+                        tmp.set(3,Ratio);    
+                    }
+                else 
+                    {
+                        ArrayList tmp2 = new ArrayList();
+                        
+                        tmp2.add(dest[i]);
+                        tmp2.add(0);
+                        tmp2.add(1);
+                        tmp2.add(0);
+                        
+                        n.NodeInfo.add(tmp2);
+                
+                    }
+            }
+          
+        }
+        public static void getAllMsgs(DTNHost from,DTNHost to)
+        {
+         ArrayList fromMsg = from.MsgInfo;
+         ArrayList toMsg   = to.MsgInfo;
+         
+         
+         
+         if(fromMsg.size() == 0 && toMsg.size() == 0) return;
+         
+         
+         else
+             {
+               ArrayList Ti1 = (ArrayList) fromMsg.get(0);
+               ArrayList Ti2 = (ArrayList) toMsg.get(0);
+         
+               String T1 = (String) Ti1.get(0);
+               String T2 = (String) Ti2.get(0);  
+               
+               //update n1 node
+               if (T2.compareTo(T1) > 0)
+               {
+                String[] Time  = new String[1000];   
+                DTNHost[] src  = new DTNHost[1000];
+                DTNHost[] dest = new DTNHost[1000];
+                
+                for(int i = 0; i < toMsg.size() ; i++)
+                    {     
+                         ArrayList tmp = (ArrayList)toMsg.get(i);
+                         Time[i] = (String)tmp.get(0);
+                         if(Time[i].compareTo(T1) > 0) fromMsg.add(tmp);
+                         else break;
+                    }
+                
+               from.MsgInfo = fromMsg;
+               sortMsgInfo(from); 
+               
+               }
+               
+               //update n2 node
+               else if (T2.compareTo(T1) < 0)
+               {
+                String[] Time  = new String[1000];   
+                DTNHost[] src  = new DTNHost[1000];
+                DTNHost[] dest = new DTNHost[1000];
+                
+                for(int i = 0; i < fromMsg.size() ; i++)
+                    {     
+                         ArrayList tmp = (ArrayList)fromMsg.get(i);
+                         Time[i] = (String)tmp.get(0);
+                         if(Time[i].compareTo(T2) > 0) toMsg.add(tmp);
+                         else break;
+                    }
+               to.MsgInfo = toMsg; 
+               sortMsgInfo(to); 
+               
+               }
+             }
+            }
         public int receiveMessage(Message m, DTNHost from) {
 		System.out.println("RECEIVE!");
                 int retVal = this.router.receiveMessage(m, from); 
                // MsgInfo.put(m, );
-                
-                DTNHost to = this.router.getHost();
-		
-                ArrayList tmp = new ArrayList();
-                String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
-                tmp.add(timeStamp);
-                tmp.add(from);
-                tmp.add(to);
-                if(!isFound(from,tmp))from.MsgInfo.add(tmp);
-                if(!isFound(to,tmp))  to.MsgInfo.add(tmp);
-                
-                sortMsgInfo(from);
-                sortMsgInfo(to);
-                
-                
                 if (retVal == MessageRouter.RCV_OK) {
 			m.addNodeOnPath(this);	// add this node on the messages path
 		}
@@ -558,7 +673,24 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @param from From who the message was from
 	 */
 	public void messageTransferred(String id, DTNHost from) {
-		this.router.messageTransferred(id, from);
+		
+                DTNHost to = this.router.getHost();
+                ArrayList tmp = new ArrayList();
+                String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
+                tmp.add(timeStamp);
+                tmp.add(from);
+                tmp.add(to);
+                if(!isFound(from,tmp))from.MsgInfo.add(tmp);
+                if(!isFound(to,tmp))  to.MsgInfo.add(tmp);
+                
+                sortMsgInfo(from);
+                sortMsgInfo(to);
+                
+                getAllMsgs(from,to);
+                
+                NodeInfoUpdate(from);
+                NodeInfoUpdate(to);
+                this.router.messageTransferred(id, from);
 	}
 
 	/**
