@@ -10,9 +10,12 @@ import core.CBRConnection;
 import core.Connection;
 import core.DTNHost;
 import static core.DTNHost.MaliciousNodes;
+import static core.DTNHost.MsgInfo;
+import static core.DTNHost.NodeInfo;
 import static core.DTNHost.sortMsgInfo;
 import core.NetworkInterface;
 import core.Settings;
+import static java.lang.Double.POSITIVE_INFINITY;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -40,8 +43,93 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 	public NetworkInterface replicate()	{
 		return new SimpleBroadcastInterface(this);
 	}
-
-	public static void getAllMsgs(DTNHost from,DTNHost to)
+        
+        //FINDING AN ENTRY OF N2 IN N1 TABLE,NOT USED AS NOT NEEDED!!!
+	public static boolean isFound(DTNHost n1,DTNHost n2)
+        {
+        DTNHost[] node = new DTNHost[1000];
+        for(int i = 0; i <n1.NodeInfo.size(); i++)
+            {
+                ArrayList tmp =(ArrayList)NodeInfo.get(i);
+                node[i]       = (DTNHost)tmp.get(0);
+                if(node[i] == n2)return true;
+            }
+        
+        return false;
+        }
+        
+        //UPDATING A DTNHOST
+        public static void NodeInfoUpdate(DTNHost n)
+        {
+         DTNHost[] src = new DTNHost[10000]; 
+         DTNHost[] dest= new DTNHost[10000];
+         int flag1 = 0,flag2 = 0;
+         
+         DTNHost[] node = new DTNHost[1000]; 
+         int[]     FTT  = new int[1000];
+         int[]     RTT  = new int[1000];
+         double[]  Ratio= new double[1000];
+         
+         for(int i = 0; i <n.MsgInfo.size(); i++)
+            {
+                ArrayList tmp =(ArrayList)n.MsgInfo.get(i);
+                src[i]        = (DTNHost)tmp.get(1);
+                dest[i]       = (DTNHost)tmp.get(2);
+            }
+         for(int i = 0; i <n.NodeInfo.size(); i++)
+            {
+                ArrayList  tmp     =(ArrayList)n.NodeInfo.get(i);
+                           
+                           node[i] =(DTNHost)tmp.get(0); 
+                           FTT[i]  =(int) tmp.get(1);
+                           RTT[i]  =(int) tmp.get(2);
+                           Ratio[i]=(int) tmp.get(3);
+                
+                if(src[i] == node[i])
+                    {
+                        
+                        Ratio[i] = (double)((FTT[i]+1)/RTT[i]);
+                        
+                        tmp.set(1,FTT[i]+1);
+                        tmp.set(3,Ratio[i]);    
+                    }
+                else 
+                    {
+                        ArrayList tmp2 = new ArrayList();
+                        
+                        tmp2.add(src[i]);
+                        tmp2.add(1);
+                        tmp2.add(0);
+                        tmp2.add(POSITIVE_INFINITY);
+                        
+                        n.NodeInfo.add(tmp2);
+                
+                    }
+                
+                if(dest[i] == node[i])
+                    {
+                        Ratio[i] = (double)(FTT[i]/(RTT[i]+1));
+                        
+                        tmp.set(2,RTT[i]+1);
+                        tmp.set(3,Ratio);    
+                    }
+                else 
+                    {
+                        ArrayList tmp2 = new ArrayList();
+                        
+                        tmp2.add(dest[i]);
+                        tmp2.add(0);
+                        tmp2.add(1);
+                        tmp2.add(0);
+                        
+                        n.NodeInfo.add(tmp2);
+                
+                    }
+            }
+          
+        }
+        
+        public static void getAllMsgs(DTNHost from,DTNHost to)
         {
          ArrayList fromMsg = from.MsgInfo;
          ArrayList toMsg   = to.MsgInfo;
@@ -74,6 +162,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                          else break;
                     }
                 
+               from.MsgInfo = fromMsg;
                sortMsgInfo(from); 
                
                }
@@ -92,7 +181,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                          if(Time[i].compareTo(T2) > 0) toMsg.add(tmp);
                          else break;
                     }
-                
+               to.MsgInfo = toMsg; 
                sortMsgInfo(to); 
                
                }
@@ -133,6 +222,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 					anotherInterface.getHost(), anotherInterface, conSpeed);
                         
                         getAllMsgs(this.host,anotherInterface.getHost());
+                        NodeInfoUpdate(this.host);
                        
                         /*
                         int n;
