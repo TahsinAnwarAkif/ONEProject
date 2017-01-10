@@ -10,9 +10,11 @@ import core.CBRConnection;
 import core.Connection;
 import core.DTNHost;
 import static core.DTNHost.MaliciousNodes;
+import static core.DTNHost.sortMsgInfo;
 import core.NetworkInterface;
 import core.Settings;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * A simple Network Interface that provides a constant bit-rate service, where
@@ -39,7 +41,71 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 		return new SimpleBroadcastInterface(this);
 	}
 
-	/**
+	public static void getAllMsgs(DTNHost from,DTNHost to)
+        {
+         ArrayList fromMsg = from.MsgInfo;
+         ArrayList toMsg   = to.MsgInfo;
+         
+         
+         
+         if(fromMsg.size() == 0 && toMsg.size() == 0) return;
+         
+         
+         else
+             {
+               ArrayList Ti1 = (ArrayList) fromMsg.get(0);
+               ArrayList Ti2 = (ArrayList) toMsg.get(0);
+         
+               String T1 = (String) Ti1.get(0);
+               String T2 = (String) Ti2.get(0);  
+               
+               //update n1 node
+               if (T2.compareTo(T1) > 0)
+               {
+                String[] Time  = new String[1000];   
+                DTNHost[] src  = new DTNHost[1000];
+                DTNHost[] dest = new DTNHost[1000];
+                
+                for(int i = 0; i < toMsg.size() ; i++)
+                    {     
+                         ArrayList tmp = (ArrayList)toMsg.get(i);
+                         Time[i] = (String)tmp.get(0);
+                         if(Time[i].compareTo(T1) > 0) fromMsg.add(tmp);
+                         else break;
+                    }
+                
+               sortMsgInfo(from); 
+               
+               }
+               
+               //update n2 node
+               else if (T2.compareTo(T1) < 0)
+               {
+                String[] Time  = new String[1000];   
+                DTNHost[] src  = new DTNHost[1000];
+                DTNHost[] dest = new DTNHost[1000];
+                
+                for(int i = 0; i < fromMsg.size() ; i++)
+                    {     
+                         ArrayList tmp = (ArrayList)fromMsg.get(i);
+                         Time[i] = (String)tmp.get(0);
+                         if(Time[i].compareTo(T2) > 0) toMsg.add(tmp);
+                         else break;
+                    }
+                
+               sortMsgInfo(to); 
+               
+               }
+             
+             
+             
+             
+             }
+            
+            
+             }
+        
+        /**
 	 * Tries to connect this host to another host. The other host must be
 	 * active and within range of this host for the connection to succeed. 
 	 * @param anotherInterface The interface to connect to
@@ -65,6 +131,9 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 
 			Connection con = new CBRConnection(this.host, this, 
 					anotherInterface.getHost(), anotherInterface, conSpeed);
+                        
+                        getAllMsgs(this.host,anotherInterface.getHost());
+                       
                         /*
                         int n;
                         n = Array.getLength(DTNHost.MaliciousNodes);
@@ -115,24 +184,20 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 		Collection<NetworkInterface> interfaces =
 			optimizer.getNearInterfaces(this);
 		for (NetworkInterface i : interfaces) {
-			/*
-                        if (i.getHost().getAddress() == 4)
-                        {
-                            connections.remove(i);
-                            
-                            return;
-                        }
-                        */
+			
                         connect(i);
+                      
 		}
-	}
+	
+          }
 
 	/** 
 	 * Creates a connection to another host. This method does not do any checks
 	 * on whether the other node is in range or active 
 	 * @param anotherInterface The interface to create the connection to
 	 */
-	public void createConnection(NetworkInterface anotherInterface) {
+	
+        public void createConnection(NetworkInterface anotherInterface) {
                 System.out.println("CREATE CONNECTION!");
 		
                 if (!isConnected(anotherInterface) && (this != anotherInterface)) {    			
