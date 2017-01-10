@@ -48,7 +48,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	private List<NetworkInterface> net;
 	private ModuleCommunicationBus comBus;
         
-        public static Map <DTNHost,ArrayList> NodeInfo;
+        public static ArrayList NodeInfo;
         public static int[] MaliciousNodes;
         public static ArrayList MsgInfo;
   
@@ -104,7 +104,7 @@ public class DTNHost implements Comparable<DTNHost> {
 				l.initialLocation(this, this.location);
 			}
 		}
-                this.NodeInfo = new HashMap <DTNHost,ArrayList>();
+                this.NodeInfo       = new ArrayList();
                 this.MaliciousNodes = new int[1000];
                 this.MsgInfo        = new ArrayList();
         }
@@ -450,7 +450,7 @@ public class DTNHost implements Comparable<DTNHost> {
          
          for(int i = 0; i < n; i++)
          {
-            arr = (ArrayList) MsgInfo.get(i);
+            arr = (ArrayList) host.MsgInfo.get(i);
             
             str[i] = (String) arr.get(0);
             src[i] = (DTNHost)arr.get(1);
@@ -484,6 +484,18 @@ public class DTNHost implements Comparable<DTNHost> {
                   } 
             } 
       }
+                            host.MsgInfo = new ArrayList();
+                            for(int i = 0; i < n; i++)
+                            {
+                                 ArrayList tmp = new ArrayList();
+                                 
+                                 tmp.add(str[i]);
+                                 tmp.add(src[i]);
+                                 tmp.add(dest[i]);
+                                 MsgInfo.add(tmp);
+        
+                            }
+        
         }
         /**
 	 * Start receiving a message from another host
