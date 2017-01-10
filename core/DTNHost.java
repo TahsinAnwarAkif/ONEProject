@@ -440,7 +440,19 @@ public class DTNHost implements Comparable<DTNHost> {
 	}
 
 	
-	public static void sortMsgInfo(DTNHost host)
+	public static boolean isFound(DTNHost n,ArrayList Entry)
+        {
+        ArrayList tmp = new ArrayList();
+        for(int i = 0; i < n.MsgInfo.size();i++)
+        {
+            tmp = (ArrayList)n.MsgInfo.get(i);
+            if(tmp == Entry) return true;
+        }
+        
+        return false;
+        }
+        
+        public static void sortMsgInfo(DTNHost host)
         {
          ArrayList arr = new ArrayList();
          String[] str = new String[10000];
@@ -492,7 +504,7 @@ public class DTNHost implements Comparable<DTNHost> {
                                  tmp.add(str[i]);
                                  tmp.add(src[i]);
                                  tmp.add(dest[i]);
-                                 MsgInfo.add(tmp);
+                                 host.MsgInfo.add(tmp);
         
                             }
         
@@ -516,8 +528,8 @@ public class DTNHost implements Comparable<DTNHost> {
                 tmp.add(timeStamp);
                 tmp.add(from);
                 tmp.add(to);
-                from.MsgInfo.add(tmp);
-                to.MsgInfo.add(tmp);
+                if(!isFound(from,tmp))from.MsgInfo.add(tmp);
+                if(!isFound(to,tmp))  to.MsgInfo.add(tmp);
                 
                 sortMsgInfo(from);
                 sortMsgInfo(to);
