@@ -544,8 +544,8 @@ public class DTNHost implements Comparable<DTNHost> {
          int flag1 = 0,flag2 = 0;
          
          DTNHost[] node = new DTNHost[1000]; 
-         int[]     FTT  = new int[1000];
-         int[]     RTT  = new int[1000];
+         double[]     FTT  = new double[1000];
+         double[]     RTT  = new double[1000];
          double[]  Ratio= new double[1000];
          
          
@@ -556,10 +556,9 @@ public class DTNHost implements Comparable<DTNHost> {
             {
                 tmpN =(ArrayList)n.NodeInfo.get(i);
                 node[i] =(DTNHost)tmpN.get(0); 
-                FTT[i]  =(int) tmpN.get(1);
-                RTT[i]  =(int) tmpN.get(2); 
+                FTT[i]  =(double) tmpN.get(1);
+                RTT[i]  =(double) tmpN.get(2); 
                 Ratio[i]=(double) tmpN.get(3);
-                
             }
          
          for(int i = 0; i <n.MsgInfo.size(); i++)
@@ -576,20 +575,22 @@ public class DTNHost implements Comparable<DTNHost> {
                         
                         tmpN =(ArrayList)n.NodeInfo.get(tt);
                             
-                        if( RTT[tt] == 0 ) Ratio[tt] = POSITIVE_INFINITY;
-                        else Ratio[tt] = (double)((FTT[tt]+1)/RTT[tt]);
+                        FTT[tt] = FTT[tt] + 1.0;
+                        if( RTT[tt] == 0.0 ) Ratio[tt] = POSITIVE_INFINITY;//OK
+                        else Ratio[tt] = (double)(FTT[tt]/RTT[tt]);
                         
                         //tmpN =(ArrayList)n.NodeInfo.get(tt);
-                        tmpN.set(1,FTT[tt]+1);
+                        tmpN.set(1,FTT[tt]);
                         tmpN.set(3,Ratio[tt]);    
                     }
                 else 
                     {
                         ArrayList tmp2 = new ArrayList();
                         
+                        //FTT[n.NodeInfo.size()] = 1;
                         tmp2.add(src[i]);
-                        tmp2.add(1);
-                        tmp2.add(0);
+                        tmp2.add(1.0);
+                        tmp2.add(0.0);
                         tmp2.add(POSITIVE_INFINITY);
                         
                         n.NodeInfo.add(tmp2);
@@ -601,13 +602,13 @@ public class DTNHost implements Comparable<DTNHost> {
                 
                 if(NodePresentAlready(n,dest[i]) != -1)
                     {
-                        int tt = NodePresentAlready(n,src[i]);
+                        int tt = NodePresentAlready(n,dest[i]);
                        
                         tmpN =(ArrayList)n.NodeInfo.get(tt);
                        
-                            
-                        Ratio[tt] = (double)((FTT[tt])/(RTT[tt]+1));
-                        tmpN.set(2,RTT[tt]+1);
+                        RTT[tt] = RTT[tt] + 1.0;    
+                        Ratio[tt] = (double)(FTT[tt]/RTT[tt]);
+                        tmpN.set(2,RTT[tt]);
                         tmpN.set(3,Ratio[tt]);    
                     }
                 else 
@@ -615,8 +616,8 @@ public class DTNHost implements Comparable<DTNHost> {
                         ArrayList tmp2 = new ArrayList();
                         
                         tmp2.add(dest[i]);
-                        tmp2.add(0);
-                        tmp2.add(1);
+                        tmp2.add(0.0);
+                        tmp2.add(1.0);
                         tmp2.add(0.0);
                         n.NodeInfo.add(tmp2);
                     }
