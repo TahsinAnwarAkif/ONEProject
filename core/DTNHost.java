@@ -573,17 +573,13 @@ public class DTNHost implements Comparable<DTNHost> {
                 if(NodePresentAlready(n,src[i]) != -1)
                     {
                         int tt = NodePresentAlready(n,src[i]);
-                        for(int j = 0; j <= tt; j++)
-                            {
-                            tmpN =(ArrayList)n.NodeInfo.get(j);
-                            FTT[j]  = (int)tmpN.get(1);
-                            RTT[j]  = (int)tmpN.get(2);
-                            Ratio[j]= (double)tmpN.get(3);
-                            }
+                        
+                        tmpN =(ArrayList)n.NodeInfo.get(tt);
+                            
                         if( RTT[tt] == 0 ) Ratio[tt] = POSITIVE_INFINITY;
                         else Ratio[tt] = (double)((FTT[tt]+1)/RTT[tt]);
                         
-                        tmpN =(ArrayList)n.NodeInfo.get(tt);
+                        //tmpN =(ArrayList)n.NodeInfo.get(tt);
                         tmpN.set(1,FTT[tt]+1);
                         tmpN.set(3,Ratio[tt]);    
                     }
@@ -606,15 +602,11 @@ public class DTNHost implements Comparable<DTNHost> {
                 if(NodePresentAlready(n,dest[i]) != -1)
                     {
                         int tt = NodePresentAlready(n,src[i]);
-                        for(int j = 0; j <= tt; j++)
-                            {
-                            tmpN =(ArrayList)n.NodeInfo.get(j);
-                            FTT[j]  = (int)tmpN.get(1);
-                            RTT[j]  = (int)tmpN.get(2);
-                            Ratio[j]= (double)tmpN.get(3);
-                            }
-                        Ratio[tt] = (double)((FTT[tt])/(RTT[tt]+1));
+                       
                         tmpN =(ArrayList)n.NodeInfo.get(tt);
+                       
+                            
+                        Ratio[tt] = (double)((FTT[tt])/(RTT[tt]+1));
                         tmpN.set(2,RTT[tt]+1);
                         tmpN.set(3,Ratio[tt]);    
                     }
