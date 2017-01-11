@@ -9,8 +9,6 @@ import java.util.Collection;
 import core.CBRConnection;
 import core.Connection;
 import core.DTNHost;
-
-import static core.DTNHost.sortMsgInfo;
 import core.NetworkInterface;
 import core.Settings;
 import static java.lang.Double.POSITIVE_INFINITY;
@@ -83,7 +81,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 					anotherInterface.getHost(), anotherInterface, conSpeed);
                         
                         //getAllMsgs(this.host,anotherInterface.getHost());
-                        //NodeInfoUpdate(this.host);
+                        //DTNHost.NodeInfoUpdate(this.host);
                        
                         /*
                         int n;
@@ -116,6 +114,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 			assert con.isUp() : "Connection " + con + " was down!";
                         
                         int f = 0;
+                        //this.host.MaliciousNodes[0] = anotherInterface.getHost();
                         for(int j = 0; j < this.host.MaliciousNodes.length; j++)
                                 {
                                     if (anotherInterface.getHost().getAddress() == this.host.MaliciousNodes[j])
