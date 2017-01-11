@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import static junit.runner.Version.id;
 import static java.lang.Double.POSITIVE_INFINITY;
+import static java.sql.Types.NULL;
 
 import movement.MovementModel;
 import movement.Path;
@@ -520,7 +521,21 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @return The value returned by 
 	 * {@link MessageRouter#receiveMessage(Message, DTNHost)}
 	 */
-         //UPDATING A DTNHOST
+        
+        
+        //FINDING AN ENTRY OF N2 IN N1 TABLE
+        public int NodePresentAlready(DTNHost n1,DTNHost n2)
+        {
+        DTNHost[] node = new DTNHost[1000];
+        for(int i = 0; i <n1.NodeInfo.size(); i++)
+            {
+                ArrayList tmp =(ArrayList)n1.NodeInfo.get(i);
+                node[i]       = (DTNHost)tmp.get(0);
+                if(node[i] == n2)return i;
+            }
+        return -1;
+        }
+        
         public void NodeInfoUpdate(DTNHost n)
         {
          //n.MaliciousNodes[0] = 1;
@@ -533,29 +548,44 @@ public class DTNHost implements Comparable<DTNHost> {
          int[]     RTT  = new int[1000];
          double[]  Ratio= new double[1000];
          
-         for(int i = 0; i <n.MsgInfo.size(); i++)
-            {
-                ArrayList tmp =(ArrayList)n.MsgInfo.get(i);
-                src[i]        = (DTNHost)tmp.get(1);
-                dest[i]       = (DTNHost)tmp.get(2);
-            }
+         
+         ArrayList tmpN = new ArrayList();
+         //GETTING NODE INFO ENTRIES
+         
          for(int i = 0; i <n.NodeInfo.size(); i++)
             {
-                ArrayList  tmp     =(ArrayList)n.NodeInfo.get(i);
-                           
-                           node[i] =(DTNHost)tmp.get(0); 
-                           FTT[i]  =(int) tmp.get(1);
-                           RTT[i]  =(int) tmp.get(2);
-                           Ratio[i]=(double) tmp.get(3);
+                tmpN =(ArrayList)n.NodeInfo.get(i);
+                node[i] =(DTNHost)tmpN.get(0); 
+                FTT[i]  =(int) tmpN.get(1);
+                RTT[i]  =(int) tmpN.get(2); 
+                Ratio[i]=(double) tmpN.get(3);
+                
+            }
+         
+         for(int i = 0; i <n.MsgInfo.size(); i++)
+            {
+                
+                ArrayList  tmp     =(ArrayList)n.MsgInfo.get(i);
+                           src[i]  = (DTNHost)tmp.get(1);
+                          dest[i]  = (DTNHost)tmp.get(2);
                 
                 
-                if(src[i] == node[i])
+                if(NodePresentAlready(n,src[i]) != -1)
                     {
+                        int tt = NodePresentAlready(n,src[i]);
+                        for(int j = 0; j <= tt; j++)
+                            {
+                            tmpN =(ArrayList)n.NodeInfo.get(j);
+                            FTT[j]  = (int)tmpN.get(1);
+                            RTT[j]  = (int)tmpN.get(2);
+                            Ratio[j]= (double)tmpN.get(3);
+                            }
+                        if( RTT[tt] == 0 ) Ratio[tt] = POSITIVE_INFINITY;
+                        else Ratio[tt] = (double)((FTT[tt]+1)/RTT[tt]);
                         
-                        Ratio[i] = (double)((FTT[i]+1)/RTT[i]);
-                        
-                        tmp.set(1,FTT[i]+1);
-                        tmp.set(3,Ratio[i]);    
+                        tmpN =(ArrayList)n.NodeInfo.get(tt);
+                        tmpN.set(1,FTT[tt]+1);
+                        tmpN.set(3,Ratio[tt]);    
                     }
                 else 
                     {
@@ -573,12 +603,20 @@ public class DTNHost implements Comparable<DTNHost> {
                 
                 
                 
-                if(dest[i] == node[i])
+                if(NodePresentAlready(n,dest[i]) != -1)
                     {
-                        Ratio[i] = (double)(FTT[i]/(RTT[i]+1));
-                        
-                        tmp.set(2,RTT[i]+1);
-                        tmp.set(3,Ratio);    
+                        int tt = NodePresentAlready(n,src[i]);
+                        for(int j = 0; j <= tt; j++)
+                            {
+                            tmpN =(ArrayList)n.NodeInfo.get(j);
+                            FTT[j]  = (int)tmpN.get(1);
+                            RTT[j]  = (int)tmpN.get(2);
+                            Ratio[j]= (double)tmpN.get(3);
+                            }
+                        Ratio[tt] = (double)((FTT[tt])/(RTT[tt]+1));
+                        tmpN =(ArrayList)n.NodeInfo.get(tt);
+                        tmpN.set(2,RTT[tt]+1);
+                        tmpN.set(3,Ratio[tt]);    
                     }
                 else 
                     {
@@ -587,13 +625,23 @@ public class DTNHost implements Comparable<DTNHost> {
                         tmp2.add(dest[i]);
                         tmp2.add(0);
                         tmp2.add(1);
-                        tmp2.add(0);
-                        
+                        tmp2.add(0.0);
                         n.NodeInfo.add(tmp2);
-                
                     }
-                //if (Ratio [i] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node[i].getAddress();
-            }
+                        
+                
+        }
+         System.out.println("NODE INFO TABLE: "+n);
+         for(int j = 0; j < n.NodeInfo.size(); j++)
+                {
+                double[]        R = new double[1000];
+                DTNHost[]   node1 = new DTNHost[1000];
+                ArrayList       t = (ArrayList)n.NodeInfo.get(j);
+                              R[j]=(double)t.get(3);
+                          node1[j]=(DTNHost)t.get(0);
+                //if (R[j] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node1[j].getAddress();
+                System.out.println(t);          
+                }
           
         }
         public  void getAllMsgs(DTNHost from,DTNHost to)
