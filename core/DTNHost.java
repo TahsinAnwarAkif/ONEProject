@@ -57,6 +57,8 @@ public class DTNHost implements Comparable<DTNHost> {
         public   ArrayList MsgInfo;
         public double Threshold;
         public Date date = new Date();
+        public boolean[] flag1  = new boolean[1000];
+        public boolean[] flag2  = new boolean[1000];
   
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
@@ -533,9 +535,7 @@ public class DTNHost implements Comparable<DTNHost> {
         {
          //n.MaliciousNodes[0] = 1;
          DTNHost[] src = new DTNHost[1000]; 
-         DTNHost[] dest= new DTNHost[1000];
-         int flag1 = 0,flag2 = 0;
-         
+         DTNHost[] dest= new DTNHost[1000];   
          DTNHost[] node = new DTNHost[1000]; 
          double[]     FTT  = new double[1000];
          double[]     RTT  = new double[1000];
@@ -554,16 +554,21 @@ public class DTNHost implements Comparable<DTNHost> {
                 Ratio[i]=(double) tmpN.get(3);
             }
          
-                int            i   = n.MsgInfo.size() - 1;   
+                for(int i = 0 ; i < n.MsgInfo.size(); i++)
+                {
+                if(n.flag1[i] == false || n.flag2[i] == false)
+                {
+                
                 ArrayList  tmp     =(ArrayList)n.MsgInfo.get(i);
                            src[i]  = (DTNHost)tmp.get(2);
                           dest[i]  = (DTNHost)tmp.get(3);
                 
                 int tt = NodePresentAlready(n,src[i]);
-                if(tt != -1)
+         
+                if(tt != -1 )
                     {
                         
-                        
+                        n.flag1[i] = true;
                         tmpN =(ArrayList)n.NodeInfo.get(tt);
                             
                         FTT[tt] = FTT[tt] + 1.0;
@@ -572,10 +577,12 @@ public class DTNHost implements Comparable<DTNHost> {
                         
                         //tmpN =(ArrayList)n.NodeInfo.get(tt);
                         tmpN.set(1,FTT[tt]);
-                        tmpN.set(3,Ratio[tt]);    
+                        tmpN.set(3,Ratio[tt]);
+                       
                     }
                 else if(tt == -1)
                     {
+                        n.flag1[i] = true;
                         ArrayList tmp2 = new ArrayList();
                         
                         //FTT[n.NodeInfo.size()] = 1;
@@ -583,10 +590,9 @@ public class DTNHost implements Comparable<DTNHost> {
                         tmp2.add(1.0);
                         tmp2.add(0.0);
                         tmp2.add(POSITIVE_INFINITY);
-                        
                         n.NodeInfo.add(tmp2);
-                
                     }
+                
                 //if (Ratio [i] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node[i].getAddress();
                 
                 
@@ -594,16 +600,18 @@ public class DTNHost implements Comparable<DTNHost> {
                 if(tt != -1)
                     {
                         
-                       
+                        n.flag2[i] = true;
                         tmpN =(ArrayList)n.NodeInfo.get(tt);
                        
                         RTT[tt] = RTT[tt] + 1.0;    
                         Ratio[tt] = (double)(FTT[tt]/RTT[tt]);
                         tmpN.set(2,RTT[tt]);
-                        tmpN.set(3,Ratio[tt]);    
+                        tmpN.set(3,Ratio[tt]);
+                      
                     }
                 else if(tt == -1)
                     {
+                        n.flag2[i] = true;
                         ArrayList tmp2 = new ArrayList();
                         
                         tmp2.add(dest[i]);
@@ -611,11 +619,16 @@ public class DTNHost implements Comparable<DTNHost> {
                         tmp2.add(1.0);
                         tmp2.add(0.0);
                         n.NodeInfo.add(tmp2);
+                  
                     }
+                
+               }
+            }
                         
                 
-        
+         /*
          System.out.println("NODE INFO TABLE: "+n);
+         
          for(int j = 0; j < n.NodeInfo.size(); j++)
                 {
                 double[]        R = new double[1000];
@@ -626,8 +639,10 @@ public class DTNHost implements Comparable<DTNHost> {
                 //if (R[j] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node1[j].getAddress();
                 System.out.println(t);          
                 }
-          
+          */
         }
+        
+        
         /*
         public  void getAllMsgs(DTNHost from,DTNHost to)
         {
@@ -764,7 +779,7 @@ public class DTNHost implements Comparable<DTNHost> {
         
         
         public int receiveMessage(Message m, DTNHost from) {
-		System.out.println("RECEIVE!");
+		//System.out.println("RECEIVE!");
 
                 int retVal = this.router.receiveMessage(m, from); 
                 // MsgInfo.put(m, );
@@ -792,7 +807,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	 */
 	public void messageTransferred(String id, DTNHost from) {
 		
-            System.out.println("TRANSFERRED!");   
+            //System.out.println("TRANSFERRED!");   
             DTNHost to = this.router.getHost();
             ArrayList tmp = new ArrayList();
             //String timeStamp = Long.toString(date.getTime());
@@ -809,13 +824,34 @@ public class DTNHost implements Comparable<DTNHost> {
             //sortMsgInfo(from);
             //sortMsgInfo(to);
             
-            //NodeInfoUpdate(from);
-            //NodeInfoUpdate(to);
+            
             
             getAllMsgs(from,to);
             
-            System.out.println(from);
+            NodeInfoUpdate(from);
+            NodeInfoUpdate(to);
+            
+            System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
+            System.out.println("MSG INFO TABLE OF NODE: "+from);
             for(int j = 0; j < from.MsgInfo.size(); j++)System.out.println(from.MsgInfo.get(j));
+            System.out.println("MSG INFO TABLE OF NODE: "+to);
+            for(int j = 0; j < to.MsgInfo.size(); j++)System.out.println(to.MsgInfo.get(j));
+            
+            
+            if(from.NodeInfo.size() != 0)
+            {
+            System.out.println("NODE INFO TABLE OF NODE: "+from);
+            for(int j = 0; j < from.NodeInfo.size(); j++)System.out.println(from.NodeInfo.get(j));
+            }
+            
+            if(to.NodeInfo.size() != 0)
+            {
+            System.out.println("NODE INFO TABLE OF NODE: "+to);
+            for(int j = 0; j < to.NodeInfo.size(); j++)System.out.println(to.NodeInfo.get(j));
+            }
+            
+            
+            
             ShareMaliciousTables(from,to);    
             
             this.router.messageTransferred(id, from);
