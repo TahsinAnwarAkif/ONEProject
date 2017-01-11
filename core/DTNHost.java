@@ -53,6 +53,7 @@ public class DTNHost implements Comparable<DTNHost> {
         public   ArrayList NodeInfo;
         public   int[] MaliciousNodes;
         public   ArrayList MsgInfo;
+        public double Threshold;
   
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
@@ -109,6 +110,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 this.NodeInfo       = new ArrayList();
                 this.MaliciousNodes = new int[1000];
                 this.MsgInfo        = new ArrayList();
+                this.Threshold      = 1.0;
         }
 	
 	/**
@@ -442,7 +444,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	}
 
 	
-	public static boolean isFound(DTNHost n,ArrayList Entry)
+	public boolean isFound(DTNHost n,ArrayList Entry)
         {
         ArrayList tmp = new ArrayList();
         for(int i = 0; i < n.MsgInfo.size();i++)
@@ -454,7 +456,7 @@ public class DTNHost implements Comparable<DTNHost> {
         return false;
         }
         
-        public static void sortMsgInfo(DTNHost host)
+        public void sortMsgInfo(DTNHost host)
         {
          ArrayList arr = new ArrayList();
          String[] str = new String[10000];
@@ -519,8 +521,9 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * {@link MessageRouter#receiveMessage(Message, DTNHost)}
 	 */
          //UPDATING A DTNHOST
-        public static void NodeInfoUpdate(DTNHost n)
+        public void NodeInfoUpdate(DTNHost n)
         {
+         //n.MaliciousNodes[0] = 1;
          DTNHost[] src = new DTNHost[1000]; 
          DTNHost[] dest= new DTNHost[1000];
          int flag1 = 0,flag2 = 0;
@@ -543,7 +546,8 @@ public class DTNHost implements Comparable<DTNHost> {
                            node[i] =(DTNHost)tmp.get(0); 
                            FTT[i]  =(int) tmp.get(1);
                            RTT[i]  =(int) tmp.get(2);
-                           Ratio[i]=(int) tmp.get(3);
+                           Ratio[i]=(double) tmp.get(3);
+                
                 
                 if(src[i] == node[i])
                     {
@@ -565,6 +569,9 @@ public class DTNHost implements Comparable<DTNHost> {
                         n.NodeInfo.add(tmp2);
                 
                     }
+                //if (Ratio [i] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node[i].getAddress();
+                
+                
                 
                 if(dest[i] == node[i])
                     {
@@ -585,10 +592,11 @@ public class DTNHost implements Comparable<DTNHost> {
                         n.NodeInfo.add(tmp2);
                 
                     }
+                //if (Ratio [i] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node[i].getAddress();
             }
           
         }
-        public static void getAllMsgs(DTNHost from,DTNHost to)
+        public  void getAllMsgs(DTNHost from,DTNHost to)
         {
          ArrayList fromMsg = from.MsgInfo;
          ArrayList toMsg   = to.MsgInfo;
@@ -646,8 +654,64 @@ public class DTNHost implements Comparable<DTNHost> {
                }
              }
             }
+        public boolean MaliciousAlready(DTNHost n,int Entry)
+        {
+        int[] tmp = new int[1000];
+        for(int i = 0; i < n.MaliciousNodes.length;i++)
+        {
+            tmp[i] = n.MaliciousNodes[i];
+            if(tmp[i] == Entry) return true;
+        }
+        
+        return false;
+        }
+        public void ShareMaliciousTables(DTNHost from,DTNHost to)
+        {
+        //from.MaliciousNodes[0] = 1;
+        //to.MaliciousNodes[0] = 1;
+        
+        int[] tmp = new int[1000];
+            
+        //ADDING IN FROM TABLE    
+        for (int i = 0; i < to.MaliciousNodes.length; i++)
+            {
+                tmp[i] = to.MaliciousNodes[i];
+                if(!MaliciousAlready(from,tmp[i]))from.MaliciousNodes[from.MaliciousNodes.length] = tmp[i];
+        
+            }
+        //ADDING IN TO TABLE    
+        for (int i = 0; i < from.MaliciousNodes.length; i++)
+            {
+                tmp[i] = from.MaliciousNodes[i];
+                if(!MaliciousAlready(to,tmp[i]))to.MaliciousNodes[to.MaliciousNodes.length] = tmp[i];
+        
+            }
+        }
+        
+        
+        
+        
         public int receiveMessage(Message m, DTNHost from) {
 		System.out.println("RECEIVE!");
+                 DTNHost to = this.router.getHost();
+                ArrayList tmp = new ArrayList();
+                String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
+                tmp.add(timeStamp);
+                tmp.add(from);
+                tmp.add(to);
+                if(!isFound(from,tmp))from.MsgInfo.add(tmp);
+                if(!isFound(to,tmp))  to.MsgInfo.add(tmp);
+                
+                sortMsgInfo(from);
+                sortMsgInfo(to);
+                
+                getAllMsgs(from,to);
+                
+                NodeInfoUpdate(from);
+                NodeInfoUpdate(to);
+                
+                ShareMaliciousTables(from,to);
+                
                 int retVal = this.router.receiveMessage(m, from); 
                // MsgInfo.put(m, );
                 if (retVal == MessageRouter.RCV_OK) {
@@ -674,22 +738,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	 */
 	public void messageTransferred(String id, DTNHost from) {
 		
-                DTNHost to = this.router.getHost();
-                ArrayList tmp = new ArrayList();
-                String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
-                tmp.add(timeStamp);
-                tmp.add(from);
-                tmp.add(to);
-                if(!isFound(from,tmp))from.MsgInfo.add(tmp);
-                if(!isFound(to,tmp))  to.MsgInfo.add(tmp);
-                
-                sortMsgInfo(from);
-                sortMsgInfo(to);
-                
-                getAllMsgs(from,to);
-                
-                NodeInfoUpdate(from);
-                NodeInfoUpdate(to);
+               
                 this.router.messageTransferred(id, from);
 	}
 
