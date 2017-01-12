@@ -59,6 +59,7 @@ public class DTNHost implements Comparable<DTNHost> {
         public Date date = new Date();
         public boolean[] flag1  = new boolean[1000];
         public boolean[] flag2  = new boolean[1000];
+        public int counter1=0,counter2=0;
   
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
@@ -767,18 +768,28 @@ public class DTNHost implements Comparable<DTNHost> {
         int[] tmp = new int[1000];
             
         //ADDING IN FROM TABLE    
-        for (int i = 0; i < to.MaliciousNodes.length; i++)
+        for (int i = 0; i < to.counter2; i++)
             {
                 
                 tmp[i] = to.MaliciousNodes[i];
-                if(!MaliciousAlready(from,tmp[i]))from.MaliciousNodes[from.MaliciousNodes.length] = tmp[i];
+                
+                if(!MaliciousAlready(from,tmp[i]))
+                {
+                    from.MaliciousNodes[from.counter1] = tmp[i];
+                    from.counter1++;
+                }
         
             }
         //ADDING IN TO TABLE    
-        for (int i = 0; i < from.MaliciousNodes.length; i++)
+        for (int i = 0; i < from.counter1; i++)
             {
                 tmp[i] = from.MaliciousNodes[i];
-                if(!MaliciousAlready(to,tmp[i]))to.MaliciousNodes[to.MaliciousNodes.length] = tmp[i];
+                
+                if(!MaliciousAlready(to,tmp[i]))
+                {
+                    to.MaliciousNodes[to.counter2] = tmp[i];
+                    to.counter2++;
+                }
         
             }
         }
@@ -818,9 +829,16 @@ public class DTNHost implements Comparable<DTNHost> {
             //System.out.println("TRANSFERRED!");   
             DTNHost to = this.router.getHost();
             ArrayList tmp = new ArrayList();
+            
+            
+            
+            
+
+            
             //String timeStamp = Long.toString(date.getTime());
             String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
                 
+            
             tmp.add(id);
             tmp.add(timeStamp);
             tmp.add(from);
@@ -847,15 +865,30 @@ public class DTNHost implements Comparable<DTNHost> {
             //NodeInfoUpdate(from);
             //NodeInfoUpdate(to);
             
+            if (!MaliciousAlready(from,to.getAddress()))
+            {
+                from.MaliciousNodes[from.counter1] = to.getAddress();
+                from.counter1++;
+            }
+            if (!MaliciousAlready(to,from.getAddress()))
+            {
+                to.MaliciousNodes[to.counter2] = from.getAddress();
+                to.counter2++;
+            }
+            
+            ShareMaliciousTables(from,to);  
+            
             
             
             System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
+            
+            //MSG INFO
             System.out.println("MSG INFO TABLE OF NODE: "+from);
             for(int j = 0; j < from.MsgInfo.size(); j++)System.out.println(from.MsgInfo.get(j));
             System.out.println("MSG INFO TABLE OF NODE: "+to);
             for(int j = 0; j < to.MsgInfo.size(); j++)System.out.println(to.MsgInfo.get(j));
             
-            
+            //NODE INFO
             if(from.NodeInfo.size() != 0)
             {
             System.out.println("NODE INFO TABLE OF NODE: "+from);
@@ -868,9 +901,13 @@ public class DTNHost implements Comparable<DTNHost> {
             for(int j = 0; j < to.NodeInfo.size(); j++)System.out.println(to.NodeInfo.get(j));
             }
             
+            //MALICIOUS NODES
+            System.out.println("MALICIOUS NODE TABLE OF NODE: "+from);
+            for(int j = 0; j < from.counter1; j++)System.out.println(from.MaliciousNodes[j]);
             
             
-            ShareMaliciousTables(from,to);    
+            System.out.println("MALICIOUS NODE TABLE OF NODE: "+to);
+            for(int j = 0; j < to.counter2; j++)System.out.println(to.MaliciousNodes[j]);
             
             this.router.messageTransferred(id, from);
 	}
