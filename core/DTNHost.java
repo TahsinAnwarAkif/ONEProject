@@ -53,13 +53,15 @@ public class DTNHost implements Comparable<DTNHost> {
 	private ModuleCommunicationBus comBus;
         
         public   ArrayList NodeInfo;
-        public   int[] MaliciousNodes;
+        public   ArrayList MaliciousNodes;
         public   ArrayList MsgInfo;
         public double Threshold;
         public Date date = new Date();
         public boolean[] flag1  = new boolean[1000];
         public boolean[] flag2  = new boolean[1000];
         public int counter1=0,counter2=0;
+        public int[] informedNodes = new int[1000];
+        public int index;
   
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
@@ -114,7 +116,7 @@ public class DTNHost implements Comparable<DTNHost> {
 			}
 		}
                 this.NodeInfo       = new ArrayList();
-                this.MaliciousNodes = new int[1000];
+                this.MaliciousNodes = new ArrayList();
                 this.MsgInfo        = new ArrayList();
                 this.Threshold      = 1.0;
         }
@@ -703,16 +705,27 @@ public class DTNHost implements Comparable<DTNHost> {
              }
             }
         */
-        public boolean MaliciousAlready(DTNHost n,int Entry)
+        public int MaliciousAlready(DTNHost n,int NodeEntry)
         {
-        int[] tmp = new int[1000];
-        for(int i = 0; i < n.MaliciousNodes.length;i++)
+        ArrayList tmp = new ArrayList();
+        ArrayList tmp2= new ArrayList();
+        int[] node  = new int[1000];
+        long [] count= new  long[1000];
+        for(int i = 0; i < n.MaliciousNodes.size();i++)
         {
-            tmp[i] = n.MaliciousNodes[i];
-            if(tmp[i] == Entry) return true;
+            tmp        = (ArrayList) n.MaliciousNodes.get(i);
+            node [i]   = (int)tmp.get(0);
+            count [i]  = (long)tmp.get(1);
+            
+            if(node[i] == NodeEntry)
+            {
+                tmp2 =(ArrayList)n.MaliciousNodes.get(i);
+                tmp2.set(1,Long.valueOf(count[i]+1)); 
+                return i;
+            }    
         }
         
-        return false;
+        return -1;
         }
         
         
@@ -760,39 +773,102 @@ public class DTNHost implements Comparable<DTNHost> {
         
             }
         }
+        
         public void ShareMaliciousTables(DTNHost from,DTNHost to)
         {
         //from.MaliciousNodes[0] = 1;
         //to.MaliciousNodes[0] = 1;
         
-        int[] tmp = new int[1000];
-            
-        //ADDING IN FROM TABLE    
-        for (int i = 0; i < to.counter2; i++)
-            {
-                
-                tmp[i] = to.MaliciousNodes[i];
-                
-                if(!MaliciousAlready(from,tmp[i]))
-                {
-                    from.MaliciousNodes[from.counter1] = tmp[i];
-                    from.counter1++;
-                }
+        ArrayList prevTable = new ArrayList();
+        prevTable = from.MaliciousNodes;
+        int psize = prevTable.size();
         
+        int[]     pnode= new int[1000];
+        long[]   pcount= new long[1000];
+        
+        for(int i = 0; i < prevTable.size(); i++)
+        {
+            ArrayList tmp = new ArrayList();
+            tmp = (ArrayList) prevTable.get(i);
+            
+            pnode[i]  =(int) tmp.get(0);
+            pcount[i] =(long) tmp.get(1);
+        
+        }
+        
+        ArrayList tmp = new ArrayList();
+        ArrayList tmp2= new ArrayList();
+        int[]     node= new int[1000];
+        long[]   count= new long[1000];
+        
+        //ADDING IN FROM TABLE    
+        for (int i = 0; i < to.MaliciousNodes.size(); i++)
+            {
+                tmp = new ArrayList();
+                tmp = (ArrayList) to.MaliciousNodes.get(i);
+                
+                node[i] = (int) tmp.get(0);
+                count[i]= (long) tmp.get(1);
+                
+                if(MaliciousAlready(from,node[i]) == -1)
+                {
+                tmp2 = new ArrayList();
+                tmp2.add(node[i]);
+                tmp2.add(Long.valueOf(count[i]));
+                from.MaliciousNodes.add(tmp2);
+                    
+                }
+                
+                else 
+                {
+                tmp2 = new ArrayList();
+                int tt = MaliciousAlready(from,node[i]);
+                
+                tmp2 = (ArrayList) from.MaliciousNodes.get(tt);
+                long get = (long)tmp2.get(1);
+                long s = count[i] + get -2;
+                tmp2.set(1,Long.valueOf(s));
+                
+                
+                }
+                
             }
         //ADDING IN TO TABLE    
-        for (int i = 0; i < from.counter1; i++)
+        for (int i = 0; i < psize; i++)
             {
-                tmp[i] = from.MaliciousNodes[i];
                 
-                if(!MaliciousAlready(to,tmp[i]))
+                tmp = new ArrayList();
+                //tmp = (ArrayList) prevTable.get(i);
+                
+                //node[i] = (int) tmp.get(0);
+                //count[i]= (int) tmp.get(1);
+                
+                if(MaliciousAlready(to,pnode[i]) == -1)
                 {
-                    to.MaliciousNodes[to.counter2] = tmp[i];
-                    to.counter2++;
+                tmp2 = new ArrayList();
+                tmp2.add(pnode[i]);
+                tmp2.add(Long.valueOf(pcount[i]));
+                to.MaliciousNodes.add(tmp2);                  
                 }
+                
+                else 
+                {
+                tmp2 = new ArrayList();
+                int tt = MaliciousAlready(to,pnode[i]);
+                
+                tmp2 = (ArrayList) to.MaliciousNodes.get(tt);
+                long get = (long)tmp2.get(1);
+                long s = pcount[i] + get - 2 ;
+                
+                tmp2.set(1,Long.valueOf(s));
+                
+                
+                }
+                
         
             }
         }
+        
         
         
         
@@ -829,12 +905,7 @@ public class DTNHost implements Comparable<DTNHost> {
             //System.out.println("TRANSFERRED!");   
             DTNHost to = this.router.getHost();
             ArrayList tmp = new ArrayList();
-            
-            
-            
-            
-
-            
+            ArrayList tmp2 = new ArrayList();
             //String timeStamp = Long.toString(date.getTime());
             String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
                 
@@ -865,23 +936,50 @@ public class DTNHost implements Comparable<DTNHost> {
             //NodeInfoUpdate(from);
             //NodeInfoUpdate(to);
             
-            if (!MaliciousAlready(from,to.getAddress()))
+            if (MaliciousAlready(from,to.getAddress()) == -1 )
             {
-                from.MaliciousNodes[from.counter1] = to.getAddress();
-                from.counter1++;
+                tmp2 = new ArrayList();
+                tmp2.add(to.getAddress());
+                tmp2.add(Long.valueOf(1));
+                from.MaliciousNodes.add(tmp2);
+                
             }
-            if (!MaliciousAlready(to,from.getAddress()))
+
+            
+            if (MaliciousAlready(to,from.getAddress()) == -1 )
             {
-                to.MaliciousNodes[to.counter2] = from.getAddress();
-                to.counter2++;
+                tmp2 = new ArrayList();
+                tmp2.add(from.getAddress());
+                tmp2.add(Long.valueOf(1));
+                to.MaliciousNodes.add(tmp2);
+                
+            }
+            
+            
+            System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
+            
+            
+            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+from);
+            for(int j = 0; j < from.MaliciousNodes.size(); j++)
+            {
+                System.out.println(from.MaliciousNodes.get(j));
+            }
+            
+            
+            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+to);
+            for(int j = 0; j < to.MaliciousNodes.size(); j++)
+            {
+                System.out.println(to.MaliciousNodes.get(j));
             }
             
             ShareMaliciousTables(from,to);  
             
             
             
-            System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
+           
             
+            
+            /*
             //MSG INFO
             System.out.println("MSG INFO TABLE OF NODE: "+from);
             for(int j = 0; j < from.MsgInfo.size(); j++)System.out.println(from.MsgInfo.get(j));
@@ -900,14 +998,20 @@ public class DTNHost implements Comparable<DTNHost> {
             System.out.println("NODE INFO TABLE OF NODE: "+to);
             for(int j = 0; j < to.NodeInfo.size(); j++)System.out.println(to.NodeInfo.get(j));
             }
-            
+            */
             //MALICIOUS NODES
-            System.out.println("MALICIOUS NODE TABLE OF NODE: "+from);
-            for(int j = 0; j < from.counter1; j++)System.out.println(from.MaliciousNodes[j]);
+            System.out.println("AFTER SHARING:MALICIOUS NODE TABLE OF NODE: "+from);
+            for(int j = 0; j < from.MaliciousNodes.size(); j++)
+            {
+                System.out.println(from.MaliciousNodes.get(j));
+            }
             
             
-            System.out.println("MALICIOUS NODE TABLE OF NODE: "+to);
-            for(int j = 0; j < to.counter2; j++)System.out.println(to.MaliciousNodes[j]);
+            System.out.println("AFTER SHARING: MALICIOUS NODE TABLE OF NODE: "+to);
+            for(int j = 0; j < to.MaliciousNodes.size(); j++)
+            {
+                System.out.println(to.MaliciousNodes.get(j));
+            }
             
             this.router.messageTransferred(id, from);
 	}
