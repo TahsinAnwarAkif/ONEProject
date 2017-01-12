@@ -936,50 +936,7 @@ public class DTNHost implements Comparable<DTNHost> {
             //NodeInfoUpdate(from);
             //NodeInfoUpdate(to);
             
-            if (MaliciousAlready(from,to.getAddress()) == -1 )
-            {
-                tmp2 = new ArrayList();
-                tmp2.add(to.getAddress());
-                tmp2.add(Long.valueOf(1));
-                from.MaliciousNodes.add(tmp2);
-                
-            }
-
-            
-            if (MaliciousAlready(to,from.getAddress()) == -1 )
-            {
-                tmp2 = new ArrayList();
-                tmp2.add(from.getAddress());
-                tmp2.add(Long.valueOf(1));
-                to.MaliciousNodes.add(tmp2);
-                
-            }
-            
-            
             System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
-            
-            
-            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+from);
-            for(int j = 0; j < from.MaliciousNodes.size(); j++)
-            {
-                System.out.println(from.MaliciousNodes.get(j));
-            }
-            
-            
-            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+to);
-            for(int j = 0; j < to.MaliciousNodes.size(); j++)
-            {
-                System.out.println(to.MaliciousNodes.get(j));
-            }
-            
-            ShareMaliciousTables(from,to);  
-            
-            
-            
-           
-            
-            
-            /*
             //MSG INFO
             System.out.println("MSG INFO TABLE OF NODE: "+from);
             for(int j = 0; j < from.MsgInfo.size(); j++)System.out.println(from.MsgInfo.get(j));
@@ -998,7 +955,42 @@ public class DTNHost implements Comparable<DTNHost> {
             System.out.println("NODE INFO TABLE OF NODE: "+to);
             for(int j = 0; j < to.NodeInfo.size(); j++)System.out.println(to.NodeInfo.get(j));
             }
-            */
+            
+            
+            if (MaliciousAlready(from,to.getAddress()) == -1 )
+            {
+                tmp2 = new ArrayList();
+                tmp2.add(to.getAddress());
+                tmp2.add(Long.valueOf(1));
+                from.MaliciousNodes.add(tmp2);
+                
+            }
+
+            
+            if (MaliciousAlready(to,from.getAddress()) == -1 )
+            {
+                tmp2 = new ArrayList();
+                tmp2.add(from.getAddress());
+                tmp2.add(Long.valueOf(1));
+                to.MaliciousNodes.add(tmp2);
+                
+            }
+      
+            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+from);
+            for(int j = 0; j < from.MaliciousNodes.size(); j++)
+            {
+                System.out.println(from.MaliciousNodes.get(j));
+            }
+            
+            
+            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+to);
+            for(int j = 0; j < to.MaliciousNodes.size(); j++)
+            {
+                System.out.println(to.MaliciousNodes.get(j));
+            }
+            
+            ShareMaliciousTables(from,to);  
+            
             //MALICIOUS NODES
             System.out.println("AFTER SHARING:MALICIOUS NODE TABLE OF NODE: "+from);
             for(int j = 0; j < from.MaliciousNodes.size(); j++)
