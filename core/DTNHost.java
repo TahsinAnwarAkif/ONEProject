@@ -554,10 +554,9 @@ public class DTNHost implements Comparable<DTNHost> {
                 Ratio[i]=(double) tmpN.get(3);
             }
          
-                for(int i = 0 ; i < n.MsgInfo.size(); i++)
-                {
-                if(n.flag1[i] == false || n.flag2[i] == false)
-                {
+                int i = n.MsgInfo.size() - 1; 
+                
+                
                 
                 ArrayList  tmp     =(ArrayList)n.MsgInfo.get(i);
                            src[i]  = (DTNHost)tmp.get(2);
@@ -568,7 +567,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 if(tt != -1 )
                     {
                         
-                        n.flag1[i] = true;
+                        //n.flag1[i] = true;
                         tmpN =(ArrayList)n.NodeInfo.get(tt);
                             
                         FTT[tt] = FTT[tt] + 1.0;
@@ -582,7 +581,7 @@ public class DTNHost implements Comparable<DTNHost> {
                     }
                 else if(tt == -1)
                     {
-                        n.flag1[i] = true;
+                       // n.flag1[i] = true;
                         ArrayList tmp2 = new ArrayList();
                         
                         //FTT[n.NodeInfo.size()] = 1;
@@ -600,7 +599,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 if(tt != -1)
                     {
                         
-                        n.flag2[i] = true;
+                       // n.flag2[i] = true;
                         tmpN =(ArrayList)n.NodeInfo.get(tt);
                        
                         RTT[tt] = RTT[tt] + 1.0;    
@@ -611,7 +610,7 @@ public class DTNHost implements Comparable<DTNHost> {
                     }
                 else if(tt == -1)
                     {
-                        n.flag2[i] = true;
+                        //n.flag2[i] = true;
                         ArrayList tmp2 = new ArrayList();
                         
                         tmp2.add(dest[i]);
@@ -622,8 +621,8 @@ public class DTNHost implements Comparable<DTNHost> {
                   
                     }
                 
-               }
-            }
+               
+            
                         
                 
          /*
@@ -739,15 +738,24 @@ public class DTNHost implements Comparable<DTNHost> {
             {
                 
                 tmp = (ArrayList) to.MsgInfo.get(i);
-                if(!isFound(from,tmp))from.MsgInfo.add(tmp);
-        
+                if(!isFound(from,tmp))
+                {
+                    System.out.println(tmp+" MSG ADDED IN:"+from);
+                    from.MsgInfo.add(tmp);
+                    NodeInfoUpdate(from);
+                }
             }
         //ADDING IN TO TABLE    
         for (int i = 0; i < from.MsgInfo.size(); i++)
             {
                 
                 tmp = (ArrayList) from.MsgInfo.get(i);
-                if(!isFound(to,tmp))to.MsgInfo.add(tmp);
+                if(!isFound(to,tmp))
+                {
+                    System.out.println(tmp+" MSG ADDED IN:"+to);
+                    to.MsgInfo.add(tmp);
+                    NodeInfoUpdate(to);
+                }
         
             }
         }
@@ -818,8 +826,16 @@ public class DTNHost implements Comparable<DTNHost> {
             tmp.add(from);
             tmp.add(to);
                 
-            if(!isFound(from,tmp))from.MsgInfo.add(tmp);
-            if(!isFound(to,tmp))  to.MsgInfo.add(tmp);
+            if(!isFound(from,tmp))
+            {
+                from.MsgInfo.add(tmp);
+                NodeInfoUpdate(from);
+            }
+            if(!isFound(to,tmp))  
+            {
+                to.MsgInfo.add(tmp);
+                NodeInfoUpdate(to);
+            }
                 
             //sortMsgInfo(from);
             //sortMsgInfo(to);
@@ -828,8 +844,10 @@ public class DTNHost implements Comparable<DTNHost> {
             
             getAllMsgs(from,to);
             
-            NodeInfoUpdate(from);
-            NodeInfoUpdate(to);
+            //NodeInfoUpdate(from);
+            //NodeInfoUpdate(to);
+            
+            
             
             System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
             System.out.println("MSG INFO TABLE OF NODE: "+from);
