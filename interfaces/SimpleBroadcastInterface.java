@@ -39,20 +39,6 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 	public NetworkInterface replicate()	{
 		return new SimpleBroadcastInterface(this);
 	}
-        
-        //FINDING AN ENTRY OF N2 IN N1 TABLE,NOT USED AS NOT NEEDED!!!
-	public static boolean isFound(DTNHost n1,DTNHost n2)
-        {
-        DTNHost[] node = new DTNHost[1000];
-        for(int i = 0; i <n1.NodeInfo.size(); i++)
-            {
-                ArrayList tmp =(ArrayList)n1.NodeInfo.get(i);
-                node[i]       = (DTNHost)tmp.get(0);
-                if(node[i] == n2)return true;
-            }
-        
-        return false;
-        }
         /**
 	 * Tries to connect this host to another host. The other host must be
 	 * active and within range of this host for the connection to succeed. 
@@ -60,7 +46,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 	 */
 	public void connect(NetworkInterface anotherInterface) {
 		
-                System.out.println("CONNECT!");
+                //System.out.println("CONNECT!");
                 
                 if (isScanning()  
 				&& anotherInterface.getHost().isActive() 
@@ -104,7 +90,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
 	 */
 	public void update() {
 		// First break the old ones
-		System.out.println("UPDATE!");
+		//System.out.println("UPDATE!");
                 optimizer.updateLocation(this);
 		for (int i=0; i<this.connections.size(); ) {
 			Connection con = this.connections.get(i);
@@ -115,9 +101,13 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                         
                         int f = 0;
                         //this.host.MaliciousNodes[0] = anotherInterface.getHost();
-                        for(int j = 0; j < this.host.MaliciousNodes.length; j++)
+                        
+                        for(int j = 0; j < this.host.MaliciousNodes.size(); j++)
                                 {
-                                    if (anotherInterface.getHost().getAddress() == this.host.MaliciousNodes[j])
+                                    ArrayList tmp = (ArrayList) this.host.MaliciousNodes.get(j);
+                                    int test1     = (int) tmp.get(0);
+                                    long test2    = (long) tmp.get(1);
+                                    if (anotherInterface.getHost().getAddress() == test1 )
                                         f = 1;
                         
                                 }
