@@ -102,6 +102,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                         int f = 0;
                         //this.host.MaliciousNodes[0] = anotherInterface.getHost();
                         
+                        /*
                         for(int j = 0; j < this.host.MaliciousNodes.size(); j++)
                                 {
                                     ArrayList tmp = (ArrayList) this.host.MaliciousNodes.get(j);
@@ -111,7 +112,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                                         f = 1;
                         
                                 }
-			
+			*/
                         if (!isWithinRange(anotherInterface) || f == 1  ) {
 				disconnect(con,anotherInterface);
 				connections.remove(i);
