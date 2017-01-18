@@ -192,7 +192,7 @@ public class MapBasedMovementTest extends TestCase {
 		assertTrue(thirdMap == fourthMap);
 	}
 
-	public void testHostMoving() {
+	public void testHostMoving() throws IOException {
 		final int NROF = 15;
 		
 		setupMapData(null, "1,1", null);
@@ -227,7 +227,7 @@ public class MapBasedMovementTest extends TestCase {
 		}
 	}
 	
-	private DTNHost setupHost() {
+	private DTNHost setupHost() throws IOException {
 		TestUtils utils = new TestUtils(null, null, s);
 		DTNHost h1 = utils.createHost(mbm, null);
 		

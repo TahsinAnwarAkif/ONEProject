@@ -13,6 +13,7 @@ import core.Message;
 import core.ModuleCommunicationBus;
 import core.NetworkInterface;
 import core.SimClock;
+import java.io.IOException;
 
 /**
  * A test stub of DTNHost for testing. All fields are public so they can be
@@ -33,7 +34,7 @@ public class TestDTNHost extends DTNHost {
 
 	
 	public TestDTNHost(List<NetworkInterface> li, 
-			ModuleCommunicationBus comBus) {
+			ModuleCommunicationBus comBus) throws IOException {
 		super(null,null,"TST", li, comBus, 
 				new StationaryMovement(new Coord(0,0)), 
 				new PassiveRouter(new TestSettings()));

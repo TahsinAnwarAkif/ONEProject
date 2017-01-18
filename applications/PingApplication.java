@@ -15,6 +15,9 @@ import core.Settings;
 import core.SimClock;
 import core.SimScenario;
 import core.World;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Simple ping application to demonstrate the application support. The 
@@ -150,7 +153,7 @@ public class PingApplication extends Application {
 	 * 
 	 * @return host
 	 */
-	private DTNHost randomHost() {
+	private DTNHost randomHost() throws IOException {
 		int destaddr = 0;
 		if (destMax == destMin) {
 			destaddr = destMin;
@@ -175,18 +178,22 @@ public class PingApplication extends Application {
 		if (this.passive) return;
 		double curTime = SimClock.getTime();
 		if (curTime - this.lastPing >= this.interval) {
-			// Time to send a new ping
-			Message m = new Message(host, randomHost(), "ping" +
-					SimClock.getIntTime() + "-" + host.getAddress(),
-					getPingSize());
-			m.addProperty("type", "ping");
-			m.setAppID(APP_ID);
-			host.createNewMessage(m);
-			
-			// Call listeners
-			super.sendEventToListeners("SentPing", null, host);
-			
-			this.lastPing = curTime;
+                    try {
+                        // Time to send a new ping
+                        Message m = new Message(host, randomHost(), "ping" +
+                                SimClock.getIntTime() + "-" + host.getAddress(),
+                                getPingSize());
+                        m.addProperty("type", "ping");
+                        m.setAppID(APP_ID);
+                        host.createNewMessage(m);
+                        
+                        // Call listeners
+                        super.sendEventToListeners("SentPing", null, host);
+                        
+                        this.lastPing = curTime;
+                    } catch (IOException ex) {
+                        Logger.getLogger(PingApplication.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 		}
 	}
 

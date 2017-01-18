@@ -16,6 +16,7 @@ import core.NetworkInterface;
 import core.SimClock;
 import core.UpdateListener;
 import core.World;
+import java.io.IOException;
 
 /**
  * Tests for the World class
@@ -101,7 +102,7 @@ public class WorldTest extends TestCase {
 
 	/** Dummy scenario for providing test values for the World */ 
 	private class TestScenario extends core.SimScenario {
-		public TestScenario() {	}
+		public TestScenario() throws IOException  {	}
 		
 		public int getWorldSizeX() {
 			return worldSizeX;

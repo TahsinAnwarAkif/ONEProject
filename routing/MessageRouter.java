@@ -170,7 +170,7 @@ public abstract class MessageRouter {
 	 * @param id ID of the message
 	 * @return The message
 	 */
-	protected Message getMessage(String id) {
+	public Message getMessage(String id) {
 		return this.messages.get(id);
 	}
 	

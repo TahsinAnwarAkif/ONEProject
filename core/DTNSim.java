@@ -3,10 +3,17 @@
  * Released under GPLv3. See LICENSE.txt for details. 
  */
 package core;
+import static core.DTNHost.t1;
+import static core.DTNHost.t2;
+import static core.DTNHost.tfr1;
+import static core.DTNHost.tfr2;
 import gui.DTNSimGUI;
+import java.io.IOException;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import ui.DTNSimTextUI;
@@ -39,7 +46,7 @@ public class DTNSim {
 	 * settings files (if given) is the run index to use for that run.
 	 * @param args Command line arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		boolean batchMode = false;
 		int nrofRuns[] = {0,1};
 		String confFiles[];

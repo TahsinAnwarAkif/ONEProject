@@ -9,6 +9,7 @@ import routing.MessageRouter;
 import core.DTNHost;
 import core.Message;
 import core.SimScenario;
+import java.io.IOException;
 
 /**
  * Tests for the MaxProp routing module
@@ -181,7 +182,7 @@ public class MaxPropRouterTest extends AbstractRouterTest {
 
 	}
 	
-	public void testRouting() {
+	public void testRouting() throws IOException {
 		int msgSize = 10;
 		DTNHost th1 = utils.createHost(c0, "temp1");
 		DTNHost th2 = utils.createHost(c0, "temp2");

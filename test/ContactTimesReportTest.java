@@ -68,7 +68,7 @@ public class ContactTimesReportTest extends TestCase {
 
 	}
 	
-	private void generateConnections(TestUtils utils) {
+	private void generateConnections(TestUtils utils) throws IOException {
 		Coord c1 = new Coord(0,0);
 		Coord c2 = new Coord(1,0);
 		Coord c3 = new Coord(2,0);

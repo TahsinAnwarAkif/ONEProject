@@ -1,0 +1,31 @@
+/* scenario Test-5-nodes
+27 messages delivered at sim time 5000.0 */
+digraph msggraph {
+	n7->n2;
+	n2->n8;
+	n8->n2;
+	n5->n0;
+	n2->n3;
+	n3->n2;
+	n3->n2;
+	n3->n2;
+	n3->n2;
+	n0->n3;
+	n8->n1;
+	n5->n1;
+	n5->n1;
+	n6->n3;
+	n2->n1;
+	n1->n3;
+	n3->n1;
+	n6->n0;
+	n4->n7;
+	n3->n0;
+	n0->n3;
+	n4->n1;
+	n1->n4;
+	n2->n0;
+	n7->n2->n0->n3->n1;
+	n4->n3;
+	n2->n3;
+}

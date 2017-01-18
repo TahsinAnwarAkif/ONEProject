@@ -17,6 +17,7 @@ import core.MessageListener;
 import core.ModuleCommunicationBus;
 import core.NetworkInterface;
 import core.Settings;
+import java.io.IOException;
 
 /**
  * Generic convenience methods for tests.
@@ -95,7 +96,7 @@ public class TestUtils {
 	 * @param name Name of the host (or null for default)
 	 * @return The new host
 	 */
-	public DTNHost createHost(Coord loc, String name) {
+	public DTNHost createHost(Coord loc, String name) throws IOException {
 		MovementModel mmProto = new StationaryMovement(loc);
 		return createHost(mmProto, name);
 	}
@@ -106,7 +107,7 @@ public class TestUtils {
 	 * @param name name of the host
 	 * @return the host
 	 */
-	public DTNHost createHost(MovementModel mmProto, String name) {		
+	public DTNHost createHost(MovementModel mmProto, String name) throws IOException {		
 		NetworkInterface ni = new TestInterface(
 				comBus.getDouble(NetworkInterface.RANGE_ID, -1),
 				comBus.getInt(NetworkInterface.SPEED_ID, -1));
@@ -129,7 +130,7 @@ public class TestUtils {
 	 * @param loc The location of the host
 	 * @return The new host
 	 */
-	public DTNHost createHost(Coord loc) {
+	public DTNHost createHost(Coord loc) throws IOException {
 		return this.createHost(loc, null);
 	}
 	
@@ -138,7 +139,7 @@ public class TestUtils {
 	 * and default name.
 	 * @return The new host
 	 */
-	public DTNHost createHost() {
+	public DTNHost createHost() throws IOException {
 		return this.createHost(new Coord(0,0));
 	}
 	

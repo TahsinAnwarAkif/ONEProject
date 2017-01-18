@@ -3,10 +3,16 @@
  * Released under GPLv3. See LICENSE.txt for details. 
  */
 package core;
-
-
-import static java.awt.PageAttributes.MediaType.A;
-import static java.awt.PageAttributes.MediaType.B;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,20 +61,29 @@ public class DTNHost implements Comparable<DTNHost> {
         public   ArrayList NodeInfo;
         public   ArrayList MaliciousNodes;
         public   ArrayList MsgInfo;
-        public double RatioThreshold = 1.3;
-        public double SumThreshold   = 10.0;
+        public static double RatioThreshold;
+        public static double SumThreshold;
         public Date date = new Date();
-        public boolean[] flag1  = new boolean[1000];
-        public boolean[] flag2  = new boolean[1000];
-        public int counter1=0,counter2=0;
-        public int[] informedNodes = new int[1000];
+        public static List<Double> t1,t2;
+        public static ArrayList tfr1,tfr2;
+        public static int counter1,counter2;
         public int index;
-  
+        public String fileName ="G:\\One Simulator\\out" + ".txt";
+        public FileInputStream fs;
+        public BufferedReader br;
+                /*
+                br.write(Double.toString(maxRatio));
+                br.newLine();
+                br.write(Double.toString(maxSum));
+                br.close();
+                */
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
 	}
 	/**
+         * 
+         * 
 	 * Creates a new DTNHost.
 	 * @param msgLs Message listeners
 	 * @param movLs Movement listeners
@@ -82,7 +97,7 @@ public class DTNHost implements Comparable<DTNHost> {
 			List<MovementListener> movLs,
 			String groupId, List<NetworkInterface> interf,
 			ModuleCommunicationBus comBus, 
-			MovementModel mmProto, MessageRouter mRouterProto) {
+			MovementModel mmProto, MessageRouter mRouterProto) throws FileNotFoundException, IOException {
 		this.comBus = comBus;
 		this.location = new Coord(0,0);
 		this.address = getNextAddress();
@@ -119,8 +134,17 @@ public class DTNHost implements Comparable<DTNHost> {
                 this.NodeInfo       = new ArrayList();
                 this.MaliciousNodes = new ArrayList();
                 this.MsgInfo        = new ArrayList();
-                this.RatioThreshold = 1.3;
-                this.SumThreshold   = 10.0;
+                
+                this.fs = new FileInputStream(fileName);
+                this.br = new BufferedReader(new InputStreamReader(fs));
+                this.RatioThreshold = Double.parseDouble(this.br.readLine());
+                this.SumThreshold   = Double.parseDouble(this.br.readLine());
+                this.counter1 = 0;
+                this.counter2 = 0;
+                this.t1 = new ArrayList();
+                this.t2 = new ArrayList();
+                this.tfr1 = new ArrayList();
+                this.tfr2 = new ArrayList();
         }
 	
 	/**
@@ -441,7 +465,8 @@ public class DTNHost implements Comparable<DTNHost> {
 	 */
 	public void sendMessage(String id, DTNHost to) {
 		
-            System.out.println("SEND!");
+             
+             //System.out.println("SEND!");
             /*
             int n;
             n = Array.getLength(MaliciousNodes);
@@ -451,7 +476,8 @@ public class DTNHost implements Comparable<DTNHost> {
             }
             */
             this.router.sendMessage(id, to);
-	}
+            //}
+            }
 
 	
 	
@@ -581,7 +607,7 @@ public class DTNHost implements Comparable<DTNHost> {
                         tmpN.set(1,FTT[tt]);
                         tmpN.set(3,Ratio[tt]);
                         
-                        if (Ratio [tt] > RatioThreshold && FTT[tt] + RTT[tt] >SumThreshold)
+                        if (Ratio [tt] > RatioThreshold && FTT[tt] + RTT[tt] > SumThreshold)
                         {
                          int e = Entry.getAddress();
                          int ii= MaliciousAlready(n,e);
@@ -629,7 +655,7 @@ public class DTNHost implements Comparable<DTNHost> {
                         tmpN.set(2,RTT[tt]);
                         tmpN.set(3,Ratio[tt]);
                         
-                        if (Ratio [tt] > RatioThreshold && FTT[tt] + RTT[tt] >SumThreshold)
+                        if (Ratio [tt] > RatioThreshold && FTT[tt] + RTT[tt] > SumThreshold)
                         {
                          int e = Entry.getAddress();
                          int ii = MaliciousAlready(n,e); 
@@ -910,8 +936,8 @@ public class DTNHost implements Comparable<DTNHost> {
         
         
         public int receiveMessage(Message m, DTNHost from) {
-		//System.out.println("RECEIVE!");
-
+		
+                
                 int retVal = this.router.receiveMessage(m, from); 
                 // MsgInfo.put(m, );
                 if (retVal == MessageRouter.RCV_OK) {
@@ -936,10 +962,29 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @param id Identifier of the message
 	 * @param from From who the message was from
 	 */
-	public void messageTransferred(String id, DTNHost from) {
-		
-            //System.out.println("TRANSFERRED!");   
+        public void forceToBeMalicious(DTNHost node,String id)
+        {
+        if(node.getAddress()== 4) 
+            {
+            	System.out.println("---------------------------------------------NODE 4 DROPPED "+id);
+            	ArrayList<Message> temp = 
+				new ArrayList<Message>(this.getMessageCollection());
+				for(int y=0;y<temp.size();y++)
+				{
+                                if(this.router.getMessage(id) == temp.get(y)) router.deleteMessage(id,true);;
+                                }
+	            	
+	    }
+        
+        }
+        
+        public void messageTransferred(String id, DTNHost from) 
+        {
             DTNHost to = this.router.getHost();
+            //if (to.getAddress() == 4) forceToBeMalicious(to,id);
+            
+            //else 
+            //{
             ArrayList tmp = new ArrayList();
             ArrayList tmp2 = new ArrayList();
             //String timeStamp = Long.toString(date.getTime());
@@ -971,10 +1016,11 @@ public class DTNHost implements Comparable<DTNHost> {
             
             //NodeInfoUpdate(from);
             //NodeInfoUpdate(to);
-            double[] test = new double[1000000];
+            double[] test  = new double[1000000];
             double[] test1 = new double[1000000];
             System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
-            
+            System.out.println("RATIO THRESHOLD: "+ RatioThreshold);
+            System.out.println("SUM THRESHOLD: "+ SumThreshold);
             /*
             //MSG INFO
             System.out.println("MSG INFO TABLE OF NODE: "+from);
@@ -986,49 +1032,18 @@ public class DTNHost implements Comparable<DTNHost> {
             //NODE INFO
             if(from.NodeInfo.size() != 0)
             {
-            int j;
-            double sum = 0;    
             System.out.println("NODE INFO TABLE OF NODE: "+from);
-            for( j = 0; j < from.NodeInfo.size(); j++)
-            {
-                //ArrayList a = (ArrayList) from.NodeInfo.get(j);
-                     //test[j]= (double) a.get(1);
-                     //test1[j]=(double)a.get(2);
-                     //sum = sum + test[j] + test1[j];
-                System.out.println(from.NodeInfo.get(j));
-            }
-            //Arrays.sort(test);
-            //Arrays.sort(test1);
-            //System.out.println(test1[test1.length-1]);
-            //System.out.println(sum/j);
+            for( int j = 0; j < from.NodeInfo.size(); j++) System.out.println(from.NodeInfo.get(j));
             }
             
             if(to.NodeInfo.size() != 0)
-            {
+            {    
             System.out.println("NODE INFO TABLE OF NODE: "+to);
-            for(int j = 0; j < to.NodeInfo.size(); j++)System.out.println(to.NodeInfo.get(j));
+            for(int j = 0; j < to.NodeInfo.size(); j++) System.out.println(to.NodeInfo.get(j));
             }
             
-            /*
-            if (MaliciousAlready(from,to.getAddress()) == -1 )
-            {
-                tmp2 = new ArrayList();
-                tmp2.add(to.getAddress());
-                tmp2.add(Long.valueOf(1));
-                from.MaliciousNodes.add(tmp2);
-                
-            }
-
+            //MALICIOUS TABLE
             
-            if (MaliciousAlready(to,from.getAddress()) == -1 )
-            {
-                tmp2 = new ArrayList();
-                tmp2.add(from.getAddress());
-                tmp2.add(Long.valueOf(1));
-                to.MaliciousNodes.add(tmp2);
-                
-            }
-            */
             System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+from);
             for(int j = 0; j < from.MaliciousNodes.size(); j++)
             {
@@ -1044,7 +1059,7 @@ public class DTNHost implements Comparable<DTNHost> {
             
             ShareMaliciousTables(from,to);  
             
-            //MALICIOUS NODES
+          
             System.out.println("AFTER SHARING:MALICIOUS NODE TABLE OF NODE: "+from);
             for(int j = 0; j < from.MaliciousNodes.size(); j++)
             {
@@ -1057,9 +1072,14 @@ public class DTNHost implements Comparable<DTNHost> {
             {
                 System.out.println(to.MaliciousNodes.get(j));
             }
-           
-            this.router.messageTransferred(id, from);
-	}
+        this.router.messageTransferred(id, from);
+        
+        
+        
+            
+           // }
+            
+        }
 
 	/**
 	 * Informs the host that a message transfer was aborted.

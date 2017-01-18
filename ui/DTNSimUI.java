@@ -18,6 +18,7 @@ import core.SimError;
 import core.SimScenario;
 import core.UpdateListener;
 import core.World;
+import java.io.IOException;
 
 /**
  * Abstract superclass for user interfaces; contains also some simulation
@@ -72,7 +73,7 @@ public abstract class DTNSimUI {
 	/**
 	 * Starts the simulation.
 	 */
-	public void start() {
+	public void start() throws IOException {
 		initModel();
 		runSim();
 	}
@@ -85,7 +86,7 @@ public abstract class DTNSimUI {
 	/**
 	 * Initializes the simulator model.
 	 */
-	private void initModel() {
+	private void initModel() throws IOException {
 		Settings settings = null;
 				
 		try {

@@ -36,7 +36,7 @@ public class MessageGraphvizReportTest extends TestCase {
 		utils = new TestUtils(null, ml, ts);
 	}
 	
-	private void generateMessages() {
+	private void generateMessages() throws IOException {
 		Coord c1 = new Coord(0,0);
 		Coord c2 = new Coord(1,0);
 		Coord c3 = new Coord(2,0);

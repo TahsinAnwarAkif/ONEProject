@@ -6,6 +6,7 @@ package core;
 
 import input.EventQueue;
 import input.EventQueueHandler;
+import java.io.IOException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -120,8 +121,7 @@ public class SimScenario implements Serializable {
 	/** Global application event listeners */
 	private List<ApplicationListener> appListeners;
 
-	static {
-		DTNSim.registerForReset(SimScenario.class.getCanonicalName());
+	static {DTNSim.registerForReset(SimScenario.class.getCanonicalName());
 		reset();
 	}
 	
@@ -132,7 +132,7 @@ public class SimScenario implements Serializable {
 	/**
 	 * Creates a scenario based on Settings object.
 	 */
-	protected SimScenario() {
+	protected SimScenario() throws IOException {
 		Settings s = new Settings(SCENARIO_NS);
 		nrofGroups = s.getInt(NROF_GROUPS_S);
 
@@ -171,7 +171,7 @@ public class SimScenario implements Serializable {
 	/**
 	 * Returns the SimScenario instance and creates one if it doesn't exist yet
 	 */
-	public static SimScenario getInstance() {
+	public static SimScenario getInstance() throws IOException {
 		if (myinstance == null) {
 			myinstance = new SimScenario();
 		}
@@ -324,7 +324,7 @@ public class SimScenario implements Serializable {
 	/**
 	 * Creates hosts for the scenario
 	 */
-	protected void createHosts() {
+	protected void createHosts() throws IOException {
 		this.hosts = new ArrayList<DTNHost>();
 
 		for (int i=1; i<=nrofGroups; i++) {
