@@ -19,7 +19,7 @@ public class Message implements Comparable<Message> {
 	private DTNHost from;
 	private DTNHost to;
 	/** Identifier of the message */
-	private String id;
+	public String id;
 	/** Size of the message (bytes) */
 	private int size;
 	/** List of nodes this message has passed */
