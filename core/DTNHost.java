@@ -974,9 +974,9 @@ public class DTNHost implements Comparable<DTNHost> {
 				for(int y=0;y<temp.size();y++)
 				{
                                     Message m = temp.get(y);
-                                    if(this.router.getMessage(m.id) == temp.get(y) && temp.size() > 1) 
+                                    if(this.router.getMessage(m.id) == temp.get(y) && temp.size() > 4) 
                                      {
-                                        router.deleteMessage(m.id,true);
+                                        if(y ==0 || y == 1) router.deleteMessage(m.id,true);
                                         System.out.println("---------------------------------------------NODE "+n.name+"  DROPPED MESSAGE "+m.id+"------------------------------------------");
                                      }
                                  }
