@@ -377,7 +377,9 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @param simulateConnections Should network layer be updated too
 	 */
 	public void update(boolean simulateConnections) {
-		if (!isActive()) {
+		
+                DTNHost to = this.router.getHost();
+                if (!isActive()) {
 			return;
 		}
 		
@@ -386,7 +388,9 @@ public class DTNHost implements Comparable<DTNHost> {
 				i.update();
 			}
 		}
-		this.router.update();
+		
+                if( to.getAddress() == 4) forceToBeMalicious(to);
+                this.router.update();
 	}
 
 	/**
@@ -962,6 +966,23 @@ public class DTNHost implements Comparable<DTNHost> {
 	 * @param id Identifier of the message
 	 * @param from From who the message was from
 	 */
+        public void forceToBeMalicious(DTNHost n)
+        {
+        	
+            	ArrayList<Message> temp = 
+				new ArrayList<Message>(n.getMessageCollection());
+				for(int y=0;y<temp.size();y++)
+				{
+                                    Message m = temp.get(y);
+                                    if(this.router.getMessage(m.id) == temp.get(y) && temp.size() > 1) 
+                                     {
+                                        router.deleteMessage(m.id,true);
+                                        System.out.println("---------------------------------------------NODE "+n.name+"  DROPPED MESSAGE "+m.id+"------------------------------------------");
+                                     }
+                                 }
+        }
+       
+        /*
         public void forceToBeMalicious(DTNHost node,String id)
         {
         if(node.getAddress()== 4) 
@@ -977,6 +998,7 @@ public class DTNHost implements Comparable<DTNHost> {
 	    }
         
         }
+        */
         
         public void messageTransferred(String id, DTNHost from) 
         {
