@@ -102,17 +102,17 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                         int f = 0;
                         //this.host.MaliciousNodes[0] = anotherInterface.getHost();
                         
-                        /*
+                        
                         for(int j = 0; j < this.host.MaliciousNodes.size(); j++)
                                 {
                                     ArrayList tmp = (ArrayList) this.host.MaliciousNodes.get(j);
                                     int test1     = (int) tmp.get(0);
                                     long test2    = (long) tmp.get(1);
-                                    if (anotherInterface.getHost().getAddress() == test1 )
+                                    if (anotherInterface.getHost().getAddress() == test1 && test2 >= 15)
                                         f = 1;
                         
                                 }
-			*/
+			
                         if (!isWithinRange(anotherInterface) || f == 1  ) {
 				disconnect(con,anotherInterface);
 				connections.remove(i);
