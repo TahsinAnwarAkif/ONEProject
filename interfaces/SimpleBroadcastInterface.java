@@ -108,7 +108,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                                     ArrayList tmp = (ArrayList) this.host.MaliciousNodes.get(j);
                                     int test1     = (int) tmp.get(0);
                                     long test2    = (long) tmp.get(1);
-                                    if (anotherInterface.getHost().getAddress() == test1 && test2 >= 15)
+                                    if (anotherInterface.getHost().getAddress() == test1 && test2 >= anotherInterface.getHost().counter)
                                         f = 1;
                         
                                 }
