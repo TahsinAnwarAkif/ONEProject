@@ -66,7 +66,7 @@ public class DTNHost implements Comparable<DTNHost> {
         public Date date = new Date();
         public static List<Double> t1,t2;
         public static ArrayList tfr1,tfr2;
-        public static int counter1,counter2;
+        public  long counter;
         public int index;
         public String fileName ="G:\\One Simulator\\out" + ".txt";
         public FileInputStream fs;
@@ -143,8 +143,7 @@ public class DTNHost implements Comparable<DTNHost> {
 
                 this.RatioThreshold = 0.43025;
                 this.SumThreshold   = 100.0;
-                this.counter1 = 0;
-                this.counter2 = 0;
+                this.counter        = (long) 15.0;
                 this.t1 = new ArrayList();
                 this.t2 = new ArrayList();
                 this.tfr1 = new ArrayList();
@@ -392,23 +391,47 @@ public class DTNHost implements Comparable<DTNHost> {
 				i.update();
 			}
 		}
-		
-                if( to.getAddress() == 30) forceToBeMalicious(to);
+                if( to.getAddress() == 1) forceToBeMalicious(to);
+                if( to.getAddress() == 3) forceToBeMalicious(to);
+                if( to.getAddress() == 5) forceToBeMalicious(to);
+                if( to.getAddress() == 7) forceToBeMalicious(to);
+                if( to.getAddress() == 9) forceToBeMalicious(to);
+                if( to.getAddress() == 11) forceToBeMalicious(to);
+                if( to.getAddress() == 13) forceToBeMalicious(to);
+                if( to.getAddress() == 15) forceToBeMalicious(to);
+                if( to.getAddress() == 17) forceToBeMalicious(to);
+                if( to.getAddress() == 19) forceToBeMalicious(to);
+                if( to.getAddress() == 21) forceToBeMalicious(to);
+                if( to.getAddress() == 23) forceToBeMalicious(to);
+                if( to.getAddress() == 25) forceToBeMalicious(to);
+                if( to.getAddress() == 27) forceToBeMalicious(to);
+                if( to.getAddress() == 29) forceToBeMalicious(to);
                 if( to.getAddress() == 31) forceToBeMalicious(to);
-                if( to.getAddress() == 32) forceToBeMalicious(to);
+                
                 if( to.getAddress() == 33) forceToBeMalicious(to);
-                if( to.getAddress() == 34) forceToBeMalicious(to);
                 if( to.getAddress() == 35) forceToBeMalicious(to);
-                //if( to.getAddress() == 36) forceToBeMalicious(to);
                 if( to.getAddress() == 37) forceToBeMalicious(to);
-                if( to.getAddress() == 38) forceToBeMalicious(to);
                 if( to.getAddress() == 39) forceToBeMalicious(to);
-                if( to.getAddress() == 40) forceToBeMalicious(to);
-                //if( to.getAddress() == 41) forceToBeMalicious(to);
-                if( to.getAddress() == 42) forceToBeMalicious(to);
+                if( to.getAddress() == 41) forceToBeMalicious(to);
                 if( to.getAddress() == 43) forceToBeMalicious(to);
-                //if( to.getAddress() == 44) forceToBeMalicious(to);
-                //if( to.getAddress() == 45) forceToBeMalicious(to);
+                if( to.getAddress() == 45) forceToBeMalicious(to);
+                if( to.getAddress() == 47) forceToBeMalicious(to);
+                if( to.getAddress() == 49) forceToBeMalicious(to);
+                if( to.getAddress() == 51) forceToBeMalicious(to);
+                if( to.getAddress() == 53) forceToBeMalicious(to);
+                if( to.getAddress() == 55) forceToBeMalicious(to);
+                if( to.getAddress() == 57) forceToBeMalicious(to);
+                if( to.getAddress() == 59) forceToBeMalicious(to);
+                
+                /*
+                if( to.getAddress() == 93) forceToBeMalicious(to);
+                if( to.getAddress() == 96) forceToBeMalicious(to);
+                
+                if( to.getAddress() == 99) forceToBeMalicious(to);
+                if( to.getAddress() == 102) forceToBeMalicious(to);
+                if( to.getAddress() == 105) forceToBeMalicious(to);
+                */
+               
                 
                 this.router.update();
 	}
@@ -1056,30 +1079,31 @@ public class DTNHost implements Comparable<DTNHost> {
             for(int j = 0; j < to.MsgInfo.size(); j++)System.out.println(to.MsgInfo.get(j));
             */
             
+            /*
             //NODE INFO
             if(from.NodeInfo.size() != 0)
             {
             System.out.println("NODE INFO TABLE OF NODE: "+from);
             for( int j = 0; j < from.NodeInfo.size(); j++) 
             {
+                
                 ArrayList a = (ArrayList)from.NodeInfo.get(j);
                 test[j] = (DTNHost)a.get(0);
+                
                 if( test[j].getAddress() == 30 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 31 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 32 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 33 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 34 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 35 )System.out.println(from.NodeInfo.get(j));
-                //if( test[j].getAddress() == 36 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 37 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 38 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 39 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 40 )System.out.println(from.NodeInfo.get(j));
-                //if( test[j].getAddress() == 41 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 42 )System.out.println(from.NodeInfo.get(j));
                 if( test[j].getAddress() == 43 )System.out.println(from.NodeInfo.get(j));
-                //if( test[j].getAddress() == 44 )System.out.println(from.NodeInfo.get(j));
-                //if( test[j].getAddress() == 45 )System.out.println(from.NodeInfo.get(j));
+                if( test[j].getAddress() == 44 )System.out.println(from.NodeInfo.get(j));
+                if( test[j].getAddress() == 45 )System.out.println(from.NodeInfo.get(j));
                 
                 }
             }
@@ -1098,22 +1122,21 @@ public class DTNHost implements Comparable<DTNHost> {
                 if( test[j].getAddress() == 33 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 34 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 35 )System.out.println(to.NodeInfo.get(j));
-                //if( test[j].getAddress() == 36 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 37 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 38 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 39 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 40 )System.out.println(to.NodeInfo.get(j));
-                //if( test[j].getAddress() == 41 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 42 )System.out.println(to.NodeInfo.get(j));
                 if( test[j].getAddress() == 43 )System.out.println(to.NodeInfo.get(j));
-                //if( test[j].getAddress() == 44 )System.out.println(to.NodeInfo.get(j));
-                //if( test[j].getAddress() == 45 )System.out.println(to.NodeInfo.get(j));
+                if( test[j].getAddress() == 44 )System.out.println(to.NodeInfo.get(j));
+                if( test[j].getAddress() == 45 )System.out.println(to.NodeInfo.get(j));
                 
               }
             }
+            */
             
             //MALICIOUS TABLE
-            
+            /*
             System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+from);
             for(int j = 0; j < from.MaliciousNodes.size(); j++)
             {
@@ -1126,21 +1149,37 @@ public class DTNHost implements Comparable<DTNHost> {
             {
                 System.out.println(to.MaliciousNodes.get(j));
             }
-            
+            */
             ShareMaliciousTables(from,to);  
             
           
             System.out.println("AFTER SHARING:MALICIOUS NODE TABLE OF NODE: "+from);
             for(int j = 0; j < from.MaliciousNodes.size(); j++)
             {
-                System.out.println(from.MaliciousNodes.get(j));
+                ArrayList a = (ArrayList)from.MaliciousNodes.get(j);
+                int     node= (int)a.get(0);
+                long      l = (long)a.get(1);
+                if(l >= counter)
+                {
+                    double s= SimClock.getTime()/1000.0; 
+                    System.out.println(a);
+                    System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
+                }
             }
             
             
             System.out.println("AFTER SHARING: MALICIOUS NODE TABLE OF NODE: "+to);
             for(int j = 0; j < to.MaliciousNodes.size(); j++)
             {
-                System.out.println(to.MaliciousNodes.get(j));
+                ArrayList a = (ArrayList)to.MaliciousNodes.get(j);
+                int     node= (int)a.get(0);
+                long      l = (long)a.get(1);
+                if(l >= counter)
+                {
+                     double s= SimClock.getTime()/1000.0; 
+                     System.out.println(a);
+                     System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
+                }
             }
             
             this.router.messageTransferred(id, from);
