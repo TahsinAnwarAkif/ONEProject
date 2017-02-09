@@ -112,6 +112,7 @@ public class SimpleBroadcastInterface extends NetworkInterface {
                                         f = 1;
                         
                                 }
+                        
 			
                         if (!isWithinRange(anotherInterface) || f == 1  ) {
 				disconnect(con,anotherInterface);
