@@ -51,7 +51,7 @@ public class World {
 	private double nextQueueEventTime;
 	private EventQueue nextEventQueue;
 	/** list of nodes; nodes are indexed by their network address */
-	private List<DTNHost> hosts;
+	public static List<DTNHost> hosts;
 	private boolean simulateConnections;
 	/** nodes in the order they should be updated (if the order should be 
 	 * randomized; null value means that the order should not be randomized) */
@@ -241,7 +241,7 @@ public class World {
 	 * Returns the hosts in a list
 	 * @return the hosts in a list
 	 */
-	public List<DTNHost> getHosts() {
+	public  List<DTNHost> getHosts() {
 		return this.hosts;
 	}
 
@@ -266,13 +266,13 @@ public class World {
 	 * @param address The address of the node
 	 * @return The requested node or null if it wasn't found
 	 */
-	public DTNHost getNodeByAddress(int address) {
+	public static DTNHost getNodeByAddress(int address) {
 		if (address < 0 || address >= hosts.size()) {
 			throw new SimError("No host for address " + address + ". Address " +
 					"range of 0-" + (hosts.size()-1) + " is valid");
 		}
 
-		DTNHost node = this.hosts.get(address);
+		DTNHost node = World.hosts.get(address);
 		assert node.getAddress() == address : "Node indexing failed. " + 
 			"Node " + node + " in index " + address;
 
