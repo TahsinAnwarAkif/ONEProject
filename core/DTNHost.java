@@ -71,12 +71,9 @@ public class DTNHost implements Comparable<DTNHost> {
         public String fileName ="G:\\One Simulator\\out" + ".txt";
         public FileInputStream fs;
         public BufferedReader br;
-                /*
-                br.write(Double.toString(maxRatio));
-                br.newLine();
-                br.write(Double.toString(maxSum));
-                br.close();
-                */
+        public ArrayList TAs  = new ArrayList() ;
+        public static boolean[] flag = new boolean[1000];;
+      
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
@@ -103,12 +100,11 @@ public class DTNHost implements Comparable<DTNHost> {
 		this.address = getNextAddress();
 		this.name = groupId+address;
 		this.net = new ArrayList<NetworkInterface>();
-
 		for (NetworkInterface i : interf) {
 			NetworkInterface ni = i.replicate();
 			ni.setHost(this);
 			net.add(ni);
-		}	
+		}
 
 		// TODO - think about the names of the interfaces and the nodes
 		//this.name = groupId + ((NetworkInterface)net.get(1)).getAddress();
@@ -141,13 +137,15 @@ public class DTNHost implements Comparable<DTNHost> {
                 //this.RatioThreshold = Double.parseDouble(this.br.readLine());
                 //this.SumThreshold   = Double.parseDouble(this.br.readLine());
 
-                this.RatioThreshold = 0.43;
-                this.SumThreshold   = 100;
-                this.counter        = (long) 20.0;
+                this.RatioThreshold = 0.51;
+                this.SumThreshold   = 75;
+                this.counter        = (long) 8.0;
                 this.t1 = new ArrayList();
                 this.t2 = new ArrayList();
                 this.tfr1 = new ArrayList();
                 this.tfr2 = new ArrayList();
+                this.TAs  = new ArrayList();
+                
         }
 	
 	/**
@@ -398,28 +396,21 @@ public class DTNHost implements Comparable<DTNHost> {
                 if( to.getAddress() == 9) forceToBeMalicious(to);
                 if( to.getAddress() == 11) forceToBeMalicious(to);
                 if( to.getAddress() == 13) forceToBeMalicious(to);
-                
                 if( to.getAddress() == 15) forceToBeMalicious(to);
                 if( to.getAddress() == 17) forceToBeMalicious(to);
-               
                 if( to.getAddress() == 19) forceToBeMalicious(to);
-                if( to.getAddress() == 21) forceToBeMalicious(to);
-                
-                
+                /*
+                if( to.getAddress() == 21) forceToBeMalicious(to);    
                 if( to.getAddress() == 23) forceToBeMalicious(to);
                 if( to.getAddress() == 25) forceToBeMalicious(to);
-                
                 if( to.getAddress() == 27) forceToBeMalicious(to);
                 if( to.getAddress() == 29) forceToBeMalicious(to);
-                
-                
                 if( to.getAddress() == 31) forceToBeMalicious(to);
-                /*
                 if( to.getAddress() == 33) forceToBeMalicious(to);
-                
                 if( to.getAddress() == 35) forceToBeMalicious(to);
                 if( to.getAddress() == 37) forceToBeMalicious(to);
                 if( to.getAddress() == 39) forceToBeMalicious(to);
+                /*
                 if( to.getAddress() == 41) forceToBeMalicious(to);
                 if( to.getAddress() == 43) forceToBeMalicious(to);
                 if( to.getAddress() == 45) forceToBeMalicious(to);
@@ -429,14 +420,12 @@ public class DTNHost implements Comparable<DTNHost> {
                 if( to.getAddress() == 53) forceToBeMalicious(to);
                 if( to.getAddress() == 55) forceToBeMalicious(to);
                 if( to.getAddress() == 57) forceToBeMalicious(to);
-                if( to.getAddress() == 59) forceToBeMalicious(to);
+                if( to.getAddress() == 59) forceToBeMalicious(to);         
                 
-                if( to.getAddress() == 61) forceToBeMalicious(to);
                 if( to.getAddress() == 63) forceToBeMalicious(to);
                 if( to.getAddress() == 65) forceToBeMalicious(to);
                 if( to.getAddress() == 67) forceToBeMalicious(to);
                 if( to.getAddress() == 69) forceToBeMalicious(to);
-                
                 if( to.getAddress() == 70) forceToBeMalicious(to);
                 if( to.getAddress() == 71) forceToBeMalicious(to);
                 if( to.getAddress() == 72) forceToBeMalicious(to);
@@ -1088,19 +1077,316 @@ public class DTNHost implements Comparable<DTNHost> {
                                     if(this.router.getMessage(m.id) == temp.get(y) && temp.size() > 4) 
                                      {
                                         if(y ==0 || y == 1) router.deleteMessage(m.id,true);
-                                        System.out.println("---------------------------------------------NODE "+n.name+"  DROPPED MESSAGE "+m.id+"------------------------------------------");
+                                        //System.out.println("---------------------------------------------NODE "+n.name+"  DROPPED MESSAGE "+m.id+"------------------------------------------");
                                      }
                                  }
         }
+        
+        public void centralizedAuthority(DTNHost from,DTNHost to,String id)
+        {
+            ArrayList tmp = new ArrayList();
+            
+            TAs.add(World.getNodeByAddress(5));
+            TAs.add(World.getNodeByAddress(15));
+            TAs.add(World.getNodeByAddress(25));
+            TAs.add(World.getNodeByAddress(35));
+            TAs.add(World.getNodeByAddress(45));
+            TAs.add(World.getNodeByAddress(55));
+            TAs.add(World.getNodeByAddress(65));
+            TAs.add(World.getNodeByAddress(75));
+            TAs.add(World.getNodeByAddress(85));
+            TAs.add(World.getNodeByAddress(95));
+            TAs.add(World.getNodeByAddress(105));
+            TAs.add(World.getNodeByAddress(115));
+            TAs.add(World.getNodeByAddress(125));
+            TAs.add(World.getNodeByAddress(135));
+            TAs.add(World.getNodeByAddress(145));
+            TAs.add(World.getNodeByAddress(155));
+            TAs.add(World.getNodeByAddress(165));
+            TAs.add(World.getNodeByAddress(175));
+            TAs.add(World.getNodeByAddress(185));
+            TAs.add(World.getNodeByAddress(195));
+            
+            String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
+
+            tmp.add(id);
+            tmp.add(timeStamp);
+            tmp.add(from);
+            tmp.add(to);
+            
+  if((from.getAddress() >= 0 && from.getAddress() <=9) || (to.getAddress() >= 0 && to.getAddress() <=9))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(0);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }
+ 
+   if((from.getAddress() >= 10 && from.getAddress() <=19) || (to.getAddress() >= 10 && to.getAddress() <=19))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(1);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 20 && from.getAddress() <=29) || (to.getAddress() >= 20 && to.getAddress() <=29))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(2);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 30 && from.getAddress() <=39) || (to.getAddress() >= 30 && to.getAddress() <=39))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(3);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 40 && from.getAddress() <=49) || (to.getAddress() >= 40 && to.getAddress() <=49))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(4);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 50 && from.getAddress() <=59) || (to.getAddress() >= 50 && to.getAddress() <=59))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(5);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }     
+    
+     if((from.getAddress() >= 60 && from.getAddress() <=69) || (to.getAddress() >= 60 && to.getAddress() <=69))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(6);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+      if((from.getAddress() >= 70 && from.getAddress() <=79) || (to.getAddress() >= 70 && to.getAddress() <=79))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(7);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+       if((from.getAddress() >= 80 && from.getAddress() <=89) || (to.getAddress() >= 80 && to.getAddress() <=89))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(8);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+        if((from.getAddress() >= 90 && from.getAddress() <=99) || (to.getAddress() >= 90 && to.getAddress() <=99))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(9);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+        if((from.getAddress() >= 100 && from.getAddress() <=109) || (to.getAddress() >= 100 && to.getAddress() <=109))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(10);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+         if((from.getAddress() >= 110 && from.getAddress() <=119) || (to.getAddress() >= 110 && to.getAddress() <=119))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(11);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+          if((from.getAddress() >= 120 && from.getAddress() <=129) || (to.getAddress() >= 120 && to.getAddress() <=129))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(12);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+           if((from.getAddress() >= 130 && from.getAddress() <=139) || (to.getAddress() >= 130 && to.getAddress() <=139))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(13);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+            if((from.getAddress() >= 140 && from.getAddress() <=149) || (to.getAddress() >= 140 && to.getAddress() <=149))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(14);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+             if((from.getAddress() >= 150 && from.getAddress() <=159) || (to.getAddress() >= 150 && to.getAddress() <=159))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(15);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+              if((from.getAddress() >= 160 && from.getAddress() <=169) || (to.getAddress() >= 160 && to.getAddress() <=169))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(16);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+               if((from.getAddress() >= 170 && from.getAddress() <=179) || (to.getAddress() >= 170 && to.getAddress() <=179))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(17);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+                if((from.getAddress() >= 180 && from.getAddress() <=189) || (to.getAddress() >= 180 && to.getAddress() <=189))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(18);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+                 if((from.getAddress() >= 190 && from.getAddress() <=199) || (to.getAddress() >= 190 && to.getAddress() <=199))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(19);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+         
+       
+            /*
+            for(int i = 0; i < TAs.size(); i++)
+            {
+                DTNHost tmp1 = (DTNHost)TAs.get(i);
+                for(int j = i+1; j < TAs.size(); j++)
+                {
+                    DTNHost tmp2 = (DTNHost)TAs.get(j);
+                    getAllMsgs(tmp1,tmp2);
+                }
+            }
+            for(int i = 0; i < TAs.size(); i++)
+            {
+                DTNHost tmp1 = (DTNHost)TAs.get(i);
+                for(int j = i+1; j < TAs.size(); j++)
+                {
+                    DTNHost tmp2 = (DTNHost)TAs.get(j);
+                    ShareMaliciousTables(tmp1,tmp2);
+                }
+            }
+            */
+            //System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
+  
+            for(int i = 0; i < TAs.size(); i++)
+            {
+            DTNHost tmp1 = (DTNHost)TAs.get(i);
+            //System.out.println("MALICIOUS INFO TABLE OF NODE: "+tmp1);    
+                
+               
+                    for(int j = 0; j < tmp1.MaliciousNodes.size(); j++)
+                        {
+                        ArrayList a = (ArrayList)tmp1.MaliciousNodes.get(j);
+                        double    s = SimClock.getTime()/1000.0; 
+                        int       m = (int)a.get(0);    
+                        if(flag[m] == false)
+                            {
+                            System.out.println(a);
+                            System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
+                            flag[m]=true;
+                            }
+                        }
+                
+            }
+            
+        }
+   
         public void messageTransferred(String id, DTNHost from) 
         {
+   
             DTNHost to = this.router.getHost();
-            
-            if(from.MsgInfo.size() > 100) from.MsgInfo = new ArrayList();
-            if(to.MsgInfo.size() > 100)   to.MsgInfo   = new ArrayList();
-            
-            if(from.NodeInfo.size() > 100) from.NodeInfo = new ArrayList();
-            if(to.NodeInfo.size() > 100)   to.NodeInfo   = new ArrayList();
             
             ArrayList tmp = new ArrayList();
             ArrayList tmp2 = new ArrayList();
@@ -1137,20 +1423,23 @@ public class DTNHost implements Comparable<DTNHost> {
             DTNHost[] test1 = new DTNHost[1000000];
             double[] FTT = new double[100000];
             double[] RTT = new double[100000];
-            System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
+            System.out.println();
+            System.out.println("GETTING WITHIN RANGE: "+from+"->"+to);
             //System.out.println("RATIO THRESHOLD: "+ RatioThreshold);
             //System.out.println("SUM THRESHOLD: "+ SumThreshold);
-            /*
+            
             //MSG INFO
+            System.out.println();
             System.out.println("MSG INFO TABLE OF NODE: "+from);
             for(int j = 0; j < from.MsgInfo.size(); j++)System.out.println(from.MsgInfo.get(j));
+            System.out.println();
             System.out.println("MSG INFO TABLE OF NODE: "+to);
             for(int j = 0; j < to.MsgInfo.size(); j++)System.out.println(to.MsgInfo.get(j));
-            */
+            
             
             
             //NODE INFO
-            /*
+            System.out.println();
             if(from.NodeInfo.size() != 0)
             {
             System.out.println("NODE INFO TABLE OF NODE: "+from);
@@ -1161,60 +1450,11 @@ public class DTNHost implements Comparable<DTNHost> {
                 test[j] = (DTNHost)a.get(0);
                 FTT [j] = (double) a.get(1);
                 RTT [j] = (double) a.get(2);
-                
-                if(FTT[j] + RTT[j] >= SumThreshold)
-                    {
-                
-                 if( test[j].getAddress() == 1 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 3 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 5 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 9 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 11 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 13 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 15 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 17 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 19 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 21 )System.out.println(from.NodeInfo.get(j));
-                 
-                 if( test[j].getAddress() == 23 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 25 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 27 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 29 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 31 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 33 )System.out.println(from.NodeInfo.get(j));
-                 
-                 
-                 if( test[j].getAddress() == 33 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 37 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 43 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 47 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 53 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 57 )System.out.println(from.NodeInfo.get(j));
-                 
-                 if( test[j].getAddress() == 63 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 67 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 73 )System.out.println(from.NodeInfo.get(j));
-                 if( test[j].getAddress() == 77 )System.out.println(from.NodeInfo.get(j));
-                
-                if( test[j].getAddress() == 30 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 31 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 32 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 33 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 34 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 35 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 37 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 38 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 39 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 40 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 42 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 43 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 44 )System.out.println(from.NodeInfo.get(j));
-                if( test[j].getAddress() == 45 )System.out.println(from.NodeInfo.get(j));
-                
-                      }
-                }
+                System.out.println(from.NodeInfo.get(j));
+               
             }
-            
+            }
+            System.out.println();
             if(to.NodeInfo.size() != 0)
             {    
             System.out.println("NODE INFO TABLE OF NODE: "+to);
@@ -1225,58 +1465,10 @@ public class DTNHost implements Comparable<DTNHost> {
                 FTT [j] = (double) a.get(1);
                 RTT [j] = (double) a.get(2);
                 
-                 if(FTT[j] + RTT[j] >= SumThreshold)
-                    {
-                
-                if( test[j].getAddress() == 1 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 3 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 5 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 9 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 11 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 13 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 15 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 17 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 19 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 21 )System.out.println(to.NodeInfo.get(j));
-                
-                if( test[j].getAddress() == 23 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 25 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 27 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 29 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 31 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 33 )System.out.println(to.NodeInfo.get(j));
-                
-                
-                if( test[j].getAddress() == 33 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 37 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 43 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 47 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 53 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 57 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 63 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 67 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 73 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 77 )System.out.println(to.NodeInfo.get(j));
-                
-                if( test[j].getAddress() == 30 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 31 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 32 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 33 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 34 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 35 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 37 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 38 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 39 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 40 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 42 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 43 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 44 )System.out.println(to.NodeInfo.get(j));
-                if( test[j].getAddress() == 45 )System.out.println(to.NodeInfo.get(j));
-                
-                    }
+                 System.out.println(to.NodeInfo.get(j));
               }
             }
-            */
+            
             
             
             //MALICIOUS TABLE
@@ -1298,8 +1490,8 @@ public class DTNHost implements Comparable<DTNHost> {
             
             ShareMaliciousTables(from,to);  
             
-            
-            System.out.println("AFTER SHARING:MALICIOUS NODE TABLE OF NODE: "+from);
+            System.out.println();
+            System.out.println("MALICIOUS NODE TABLE OF NODE: "+from);
             for(int j = 0; j < from.MaliciousNodes.size(); j++)
             {
                 ArrayList a = (ArrayList)from.MaliciousNodes.get(j);
@@ -1309,12 +1501,12 @@ public class DTNHost implements Comparable<DTNHost> {
                 {
                     double s= SimClock.getTime()/1000.0; 
                     System.out.println(a);
-                    System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
+                    //System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
                 }
             }
             
-            
-            System.out.println("AFTER SHARING: MALICIOUS NODE TABLE OF NODE: "+to);
+            System.out.println();
+            System.out.println("MALICIOUS NODE TABLE OF NODE: "+to);
             for(int j = 0; j < to.MaliciousNodes.size(); j++)
             {
                 ArrayList a = (ArrayList)to.MaliciousNodes.get(j);
@@ -1324,9 +1516,11 @@ public class DTNHost implements Comparable<DTNHost> {
                 {
                      double s= SimClock.getTime()/1000.0; 
                      System.out.println(a);
-                     System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
+                    // System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
                 }
             }
+            
+            
             
             
             this.router.messageTransferred(id, from);
