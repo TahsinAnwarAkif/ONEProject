@@ -14,6 +14,7 @@ import core.Message;
 import core.NetworkInterface;
 import core.ModuleCommunicationBus;
 import core.SimClock;
+import java.io.IOException;
 
 /**
  * Some tests for the Connection class.
@@ -151,13 +152,13 @@ public class ConnectionTest extends TestCase {
 	}
 
 	
-	public void testFinalizeTransfer() {
+	public void testFinalizeTransfer() throws IOException {
 		assertFalse(c[0].isMessageTransferred());
 		c[0].finalizeTransfer(); /* this doesn't check time */
 		assertTrue(c[0].isMessageTransferred());
 	}
 
-	public void testIsReadyForTransfer() {
+	public void testIsReadyForTransfer() throws IOException {
 		assertFalse(c[0].isReadyForTransfer());
 		assertFalse(c[1].isReadyForTransfer());
 		assertTrue(c[3].isReadyForTransfer());
@@ -166,7 +167,7 @@ public class ConnectionTest extends TestCase {
 		assertTrue(c[0].isReadyForTransfer());
 	}
 
-	public void testGetTotalBytesTransferred() {
+	public void testGetTotalBytesTransferred() throws IOException {
 		int count = 0;
 		
 		for (int i=0; i<10; i++) {
