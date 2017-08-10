@@ -30,6 +30,10 @@ import static junit.runner.Version.id;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.sql.Types.NULL;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import movement.MovementModel;
 import movement.Path;
@@ -59,6 +63,9 @@ public class DTNHost implements Comparable<DTNHost> {
 	private ModuleCommunicationBus comBus;
         
         public   ArrayList NodeInfo;
+        public Map<DTNHost,Integer> MaliciousInfo;
+        public Map<String,ArrayList> MessageInfo;
+        public Map<DTNHost,ArrayList> NInfo;
         public   ArrayList MaliciousNodes;
         public   ArrayList MsgInfo;
         public static double RatioThreshold;
@@ -68,15 +75,22 @@ public class DTNHost implements Comparable<DTNHost> {
         public static ArrayList tfr1,tfr2;
         public  long counter;
         public int index;
-        public String fileName ="G:\\One Simulator\\out" + ".txt";
-        public FileInputStream fs;
-        public BufferedReader br;
+        public static String fileName;
+        public static FileOutputStream fs;
+        public static BufferedWriter br;
         public ArrayList TAs  = new ArrayList() ;
         public static boolean[] flag = new boolean[1000];;
       
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
+                fileName = "G:\\One Simulator\\out" + ".txt";
+            try {
+                fs = new FileOutputStream(fileName);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(DTNHost.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                br = new BufferedWriter(new OutputStreamWriter(fs));
 	}
 	/**
          * 
@@ -128,18 +142,15 @@ public class DTNHost implements Comparable<DTNHost> {
 			}
 		}
                 this.NodeInfo       = new ArrayList();
-                this.MaliciousNodes = new ArrayList();
-                this.MsgInfo        = new ArrayList();
-                
-                this.fs = new FileInputStream(fileName);
-                this.br = new BufferedReader(new InputStreamReader(fs));
-                
+                this.MaliciousInfo  = new HashMap<DTNHost,Integer>();
+                this.MessageInfo    = new LinkedHashMap<String,ArrayList>();
+                this.NInfo          = new HashMap<DTNHost,ArrayList>();
                 //this.RatioThreshold = Double.parseDouble(this.br.readLine());
                 //this.SumThreshold   = Double.parseDouble(this.br.readLine());
 
-                this.RatioThreshold = 0.51;
-                this.SumThreshold   = 75;
-                this.counter        = (long) 8.0;
+                this.RatioThreshold = 0.43;
+                this.SumThreshold   = 100;
+                this.counter        = (long) 20.0;
                 this.t1 = new ArrayList();
                 this.t2 = new ArrayList();
                 this.tfr1 = new ArrayList();
@@ -389,6 +400,7 @@ public class DTNHost implements Comparable<DTNHost> {
 				i.update();
 			}
 		}
+                
                 if( to.getAddress() == 1) forceToBeMalicious(to);
                 if( to.getAddress() == 3) forceToBeMalicious(to);
                 if( to.getAddress() == 5) forceToBeMalicious(to);
@@ -399,13 +411,14 @@ public class DTNHost implements Comparable<DTNHost> {
                 if( to.getAddress() == 15) forceToBeMalicious(to);
                 if( to.getAddress() == 17) forceToBeMalicious(to);
                 if( to.getAddress() == 19) forceToBeMalicious(to);
-                /*
+                
                 if( to.getAddress() == 21) forceToBeMalicious(to);    
                 if( to.getAddress() == 23) forceToBeMalicious(to);
                 if( to.getAddress() == 25) forceToBeMalicious(to);
                 if( to.getAddress() == 27) forceToBeMalicious(to);
                 if( to.getAddress() == 29) forceToBeMalicious(to);
                 if( to.getAddress() == 31) forceToBeMalicious(to);
+                /*
                 if( to.getAddress() == 33) forceToBeMalicious(to);
                 if( to.getAddress() == 35) forceToBeMalicious(to);
                 if( to.getAddress() == 37) forceToBeMalicious(to);
@@ -561,81 +574,9 @@ public class DTNHost implements Comparable<DTNHost> {
 	 */
 	public void sendMessage(String id, DTNHost to) {
 		
-             
-             //System.out.println("SEND!");
-            /*
-            int n;
-            n = Array.getLength(MaliciousNodes);
-            for (int i = 0; i < n; i++)
-            {
-                if (MaliciousNodes[i] == to)return;
-            }
-            */
             this.router.sendMessage(id, to);
             //}
             }
-
-	
-	
-        /*
-        public void sortMsgInfo(DTNHost host)
-        {
-         ArrayList arr = new ArrayList();
-         String[] str = new String[10000];
-         DTNHost[] src  = new DTNHost[10000];
-         DTNHost[] dest = new DTNHost[10000];
-         int n = host.MsgInfo.size();
-         
-         for(int i = 0; i < n; i++)
-         {
-            arr = (ArrayList) host.MsgInfo.get(i);
-            
-            str[i] = (String) arr.get(0);
-            src[i] = (DTNHost)arr.get(1);
-            dest[i]= (DTNHost)arr.get(2);
-         }
-         int j;
-         boolean flag = true;   
-         String temp;
-         DTNHost temp2;
-         DTNHost temp3;
-         while ( flag )
-     {
-            flag= false;    
-            
-            for( j=0;  j < n - 1;  j++ )
-            {
-                   if ( str[ j ].compareTo(str[j+1]) < 0 )  
-                   {
-                           temp = str[ j ];
-                           temp2 = src[j];
-                           temp3 = dest[j];
-                           
-                           str[ j ] = str  [ j+1 ];
-                           src[j]   = src  [ j+1 ];
-                           dest[j]  = dest [ j+1 ];
-                           
-                           str[ j+1 ] = temp;
-                           src[ j+1 ] = temp2;
-                           dest[ j+1 ] = temp3;
-                           flag = true;         
-                  } 
-            } 
-      }
-                            host.MsgInfo = new ArrayList();
-                            for(int i = 0; i < n; i++)
-                            {
-                                 ArrayList tmp = new ArrayList();
-                                 
-                                 tmp.add(str[i]);
-                                 tmp.add(src[i]);
-                                 tmp.add(dest[i]);
-                                 host.MsgInfo.add(tmp);
-        
-                            }
-        
-        }
-        */
         /**
 	 * Start receiving a message from another host
 	 * @param m The message
@@ -658,241 +599,79 @@ public class DTNHost implements Comparable<DTNHost> {
         return -1;
         }
         
-        public void NodeInfoUpdate(DTNHost n)
-        {
-         //n.MaliciousNodes[0] = 1;
-         DTNHost[] src = new DTNHost[1000000]; 
-         DTNHost[] dest= new DTNHost[1000000];   
-         DTNHost[] node = new DTNHost[1000000]; 
-         double[]     FTT  = new double[1000000];
-         double[]     RTT  = new double[1000000];
-         double[]  Ratio= new double[1000000];
-         
-         
+        public void NodeInfoUpdate(DTNHost n, String id)
+        { 
          ArrayList tmpN = new ArrayList();
-         //GETTING NODE INFO ENTRIES
+       //ArrayList tmpp = new ArrayList(n.MessageInfo.values());
+         ArrayList tmp  = (ArrayList) n.MessageInfo.get(id);
+         DTNHost    source = (DTNHost)tmp.get(1);
+         DTNHost    dst    = (DTNHost)tmp.get(2);
          
-         for(int i = 0; i <n.NodeInfo.size(); i++)
-            {
-                tmpN =(ArrayList)n.NodeInfo.get(i);
-                node[i] =(DTNHost)tmpN.get(0); 
-                FTT[i]  =(double) tmpN.get(1);
-                RTT[i]  =(double) tmpN.get(2); 
-                Ratio[i]=(double) tmpN.get(3);
-            }
-         
-                int i = n.MsgInfo.size() - 1; 
-                
-                ArrayList  tmp     =(ArrayList)n.MsgInfo.get(i);
-                           src[i]  = (DTNHost)tmp.get(2);
-                          dest[i]  = (DTNHost)tmp.get(3);
-                
-                int tt = NodePresentAlready(n,src[i]);
-         
-                if(tt != -1 )
-                    {
-                        
-                        //n.flag1[i] = true;
-                        tmpN =(ArrayList)n.NodeInfo.get(tt);
-                        DTNHost Entry = (DTNHost)tmpN.get(0);    
-                        FTT[tt] = FTT[tt] + 1.0;
-                        if( RTT[tt] == 0.0 ) Ratio[tt] = POSITIVE_INFINITY;//OK
-                        else Ratio[tt] = (double)(FTT[tt]/RTT[tt]);
-                        
-                        //tmpN =(ArrayList)n.NodeInfo.get(tt);
-                        tmpN.set(1,FTT[tt]);
-                        tmpN.set(3,Ratio[tt]);
-                        
-                        if (Ratio [tt] <= RatioThreshold && FTT[tt] + RTT[tt] >= SumThreshold)
-                        {
-                         int e = Entry.getAddress();
-                         int ii= MaliciousAlready(n,e);
-                            if(ii == -1)
-                            {
-                                ArrayList tmp2 = new ArrayList();
-                                tmp2.add(e);
-                                tmp2.add(Long.valueOf(1));
-                                n.MaliciousNodes.add(tmp2);
-                            }
-                            
-                            else 
-                            {
-                                ArrayList tmp2 = (ArrayList)n.MaliciousNodes.get(ii);
-                                long h = (long)tmp2.get(1);
-                                tmp2.set(1,Long.valueOf(h - 1));
-                            }
-                            
-                        }
-                       
-                    }
-                else if(tt == -1)
-                    {
-                       // n.flag1[i] = true;
-                        ArrayList tmp2 = new ArrayList();
-                        
-                        //FTT[n.NodeInfo.size()] = 1;
-                        tmp2.add(src[i]);
-                        tmp2.add(1.0);
-                        tmp2.add(0.0);
-                        tmp2.add(POSITIVE_INFINITY);
-                        n.NodeInfo.add(tmp2);
-                    }
-                
-                
-                
-                
-                tt = NodePresentAlready(n,dest[i]);
-                if(tt != -1)
-                    {
-                        
-                       // n.flag2[i] = true;
-                        tmpN =(ArrayList)n.NodeInfo.get(tt);
-                        DTNHost Entry = (DTNHost)tmpN.get(0); 
-                        RTT[tt] = RTT[tt] + 1.0;    
-                        Ratio[tt] = (double)(FTT[tt]/RTT[tt]);
-                        tmpN.set(2,RTT[tt]);
-                        tmpN.set(3,Ratio[tt]);
-                        
-                        if (Ratio [tt] <= RatioThreshold && FTT[tt] + RTT[tt] >= SumThreshold)
-                        {
-                         int e = Entry.getAddress();
-                         int ii = MaliciousAlready(n,e); 
-                            if(ii == -1)
-                            {
-                                ArrayList tmp2 = new ArrayList();
-                                tmp2.add(e);
-                                tmp2.add(Long.valueOf(1));
-                                n.MaliciousNodes.add(tmp2);
-                            }
-                            
-                            else 
-                            {
-                                ArrayList tmp2 = (ArrayList)n.MaliciousNodes.get(ii);
-                                long h = (long)tmp2.get(1);
-                                tmp2.set(1,Long.valueOf(h - 1));
-                            }
-                            
-                        }
-                      
-                    }
-                else if(tt == -1)
-                    {
-                        //n.flag2[i] = true;
-                        ArrayList tmp2 = new ArrayList();
-                        
-                        tmp2.add(dest[i]);
-                        tmp2.add(0.0);
-                        tmp2.add(1.0);
-                        tmp2.add(0.0);
-                        n.NodeInfo.add(tmp2);
-                  
-                    }
-                //if (Ratio [i] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node[i].getAddress();
-                
-               
-            
-                        
-                
-         /*
-         System.out.println("NODE INFO TABLE: "+n);
-         
-         for(int j = 0; j < n.NodeInfo.size(); j++)
-                {
-                double[]        R = new double[1000];
-                DTNHost[]   node1 = new DTNHost[1000];
-                ArrayList       t = (ArrayList)n.NodeInfo.get(j);
-                              R[j]=(double)t.get(3);
-                          node1[j]=(DTNHost)t.get(0);
-                //if (R[j] != Threshold) n.MaliciousNodes[n.MaliciousNodes.length+1] = node1[j].getAddress();
-                System.out.println(t);          
-                }
-          */
-        }
-        
-        
-        /*
-        public  void getAllMsgs(DTNHost from,DTNHost to)
-        {
-         ArrayList fromMsg = from.MsgInfo;
-         ArrayList toMsg   = to.MsgInfo;
-         
-         
-         
-         if(fromMsg.size() == 0 && toMsg.size() == 0) return;
-         
-         
+         if(!n.NInfo.containsKey(source))
+         {
+                tmpN.add(1.0);
+                tmpN.add(0.0);
+                tmpN.add(POSITIVE_INFINITY);
+                n.NInfo.put(source,tmpN);
+         }
          else
-             {
-               ArrayList Ti1 = (ArrayList) fromMsg.get(0);
-               ArrayList Ti2 = (ArrayList) toMsg.get(0);
+         {
+                double frtt = 0.0;
+                ArrayList a;
+                a =(ArrayList)n.NInfo.get(source);
+                double ftt = (double)a.get(0) + 1.0;
+                double rtt = (double)a.get(1);
+                
+                if( rtt == 0.0 ) frtt = POSITIVE_INFINITY;
+                  
+                else 
+                                 frtt = (double)(ftt / rtt);
+                 
+                a.set(0,ftt);
+                a.set(2, frtt );
+                
+                if (frtt <= RatioThreshold && ftt + rtt >= SumThreshold)
+                    {
+                    int value    = 1;
+                    boolean flag = n.MaliciousInfo.containsKey(source);     
+                    if(flag)value= (int) n.MaliciousInfo.get(source) + 1;
+                    n.MaliciousInfo.put(source,value);
+                    
+                    //if(!flag)System.out.println("MALICIOUS NODE: "+source+" FIRST FOUND AT: "+SimClock.getTime()/1000.0);
+                    } 
+         }
          
-               String T1 = (String) Ti1.get(0);
-               String T2 = (String) Ti2.get(0);  
-               
-               //update n1 node
-               if (T2.compareTo(T1) > 0)
-               {
-                String[] Time  = new String[1000];   
-                DTNHost[] src  = new DTNHost[1000];
-                DTNHost[] dest = new DTNHost[1000];
-                
-                for(int i = 0; i < toMsg.size() ; i++)
-                    {     
-                         ArrayList tmp = (ArrayList)toMsg.get(i);
-                         Time[i] = (String)tmp.get(0);
-                         if(Time[i].compareTo(T1) > 0) fromMsg.add(tmp);
-                         else break;
+         tmpN = new ArrayList();
+         
+         if(!n.NInfo.containsKey(dst))
+         {
+                tmpN.add(0.0);
+                tmpN.add(1.0);
+                tmpN.add(0.0);
+                n.NInfo.put(dst,tmpN);
+         }
+         else
+         {
+                double frtt = 0.0;
+                ArrayList a;
+                a =(ArrayList)n.NInfo.get(dst);
+                double ftt = (double) a.get(0);
+                double rtt = (double) a.get(1) + 1.0;
+                frtt = (double)(ftt / rtt);
+                a.set(1,rtt);
+                a.set(2, frtt );
+   
+                if (frtt <= RatioThreshold && ftt + rtt >= SumThreshold)
+                    {
+                    int value    = 1;
+                    boolean flag = n.MaliciousInfo.containsKey(dst);     
+                    if(flag) value = (int) n.MaliciousInfo.get(dst) + 1;    
+                    n.MaliciousInfo.put(dst,value);
+                    
+                    //if(!flag)System.out.println("MALICIOUS NODE: "+dst+" FIRST FOUND AT: "+SimClock.getTime()/1000.0);
                     }
-                
-               from.MsgInfo = fromMsg;
-               //sortMsgInfo(from); 
-               
-               }
-               
-               //update n2 node
-               else if (T2.compareTo(T1) < 0)
-               {
-                String[] Time  = new String[1000];   
-                DTNHost[] src  = new DTNHost[1000];
-                DTNHost[] dest = new DTNHost[1000];
-                
-                for(int i = 0; i < fromMsg.size() ; i++)
-                    {     
-                         ArrayList tmp = (ArrayList)fromMsg.get(i);
-                         Time[i] = (String)tmp.get(0);
-                         if(Time[i].compareTo(T2) > 0) toMsg.add(tmp);
-                         else break;
-                    }
-               to.MsgInfo = toMsg; 
-               //sortMsgInfo(to); 
-               
-               }
-             }
-            }
-        */
-        public int MaliciousAlready(DTNHost n,int NodeEntry)
-        {
-        ArrayList tmp = new ArrayList();
-        ArrayList tmp2= new ArrayList();
-        int[] node  = new int[1000];
-        long [] count= new  long[1000];
-        for(int i = 0; i < n.MaliciousNodes.size();i++)
-        {
-            tmp        = (ArrayList) n.MaliciousNodes.get(i);
-            node [i]   = (int)tmp.get(0);
-            count [i]  = (long)tmp.get(1);
-            
-            if(node[i] == NodeEntry)
-            {
-                tmp2 =(ArrayList)n.MaliciousNodes.get(i);
-                tmp2.set(1,Long.valueOf(count[i]+1)); 
-                return i;
-            }    
-        }
-        
-        return -1;
-        }
-        
+         }
+        }   
         
         public boolean isFound(DTNHost n,ArrayList Entry)
         {
@@ -907,132 +686,56 @@ public class DTNHost implements Comparable<DTNHost> {
         }
         public void getAllMsgs(DTNHost from,DTNHost to)
         {
-        //from.MaliciousNodes[0] = 1;
-        //to.MaliciousNodes[0] = 1;
         
-        ArrayList tmp = new ArrayList();
             
         //ADDING IN FROM TABLE    
-        for (int i = 0; i < to.MsgInfo.size(); i++)
+        for(String key: to.MessageInfo.keySet())
+        {
+            if(!from.MessageInfo.containsKey(key))
             {
-                
-                tmp = (ArrayList) to.MsgInfo.get(i);
-                if(!isFound(from,tmp))
-                {
-                    //System.out.println(tmp+" MSG ADDED IN:"+from);
-                    from.MsgInfo.add(tmp);
-                    NodeInfoUpdate(from);
-                }
+                ArrayList tmp;
+                tmp = (ArrayList) to.MessageInfo.get(key);    
+                from.MessageInfo.put(key,tmp);
+                NodeInfoUpdate(from, key);
             }
-        //ADDING IN TO TABLE    
-        for (int i = 0; i < from.MsgInfo.size(); i++)
-            {
-                
-                tmp = (ArrayList) from.MsgInfo.get(i);
-                if(!isFound(to,tmp))
-                {
-                    //System.out.println(tmp+" MSG ADDED IN:"+to);
-                    to.MsgInfo.add(tmp);
-                    NodeInfoUpdate(to);
-                }
+        }
         
+        //ADDING IN TO TABLE    
+        for(String key: from.MessageInfo.keySet())
+        {
+            if(!to.MessageInfo.containsKey(key))
+            {
+                ArrayList tmp;
+                tmp = (ArrayList) from.MessageInfo.get(key);    
+                to.MessageInfo.put(key,tmp);
+                NodeInfoUpdate(to,key);
             }
+        }
+        
         }
         
         public void ShareMaliciousTables(DTNHost from,DTNHost to)
         {
-        //from.MaliciousNodes[0] = 1;
-        //to.MaliciousNodes[0] = 1;
-        
-        ArrayList prevTable = new ArrayList();
-        prevTable = from.MaliciousNodes;
-        int psize = prevTable.size();
-        
-        int[]     pnode= new int[1000];
-        long[]   pcount= new long[1000];
-        
-        for(int i = 0; i < prevTable.size(); i++)
-        {
-            ArrayList tmp = new ArrayList();
-            tmp = (ArrayList) prevTable.get(i);
+
+         //ADDING IN FROM TABLE
+         for (DTNHost key : to.MaliciousInfo.keySet())
+         {
+            if(from.MaliciousInfo.containsKey(key))
+                from.MaliciousInfo.put(key,(int)from.MaliciousInfo.get(key)+1);
             
-            pnode[i]  =(int) tmp.get(0);
-            pcount[i] =(long) tmp.get(1);
-        
-        }
-        
-        ArrayList tmp = new ArrayList();
-        ArrayList tmp2= new ArrayList();
-        int[]     node= new int[1000];
-        long[]   count= new long[1000];
-        
-        //ADDING IN FROM TABLE    
-        
-        for (int i = 0; i < to.MaliciousNodes.size(); i++)
-            {
-                tmp = new ArrayList();
-                tmp = (ArrayList) to.MaliciousNodes.get(i);
-                
-                node[i] = (int) tmp.get(0);
-                count[i]= (long) tmp.get(1);
-                
-                if(MaliciousAlready(from,node[i]) == -1)
-                {
-                tmp2 = new ArrayList();
-                tmp2.add(node[i]);
-                tmp2.add(Long.valueOf(count[i]));
-                from.MaliciousNodes.add(tmp2);
-                    
-                }
-                
-                else 
-                {
-                tmp2 = new ArrayList();
-                int tt = MaliciousAlready(from,node[i]);
-                
-                tmp2 = (ArrayList) from.MaliciousNodes.get(tt);
-                long get = (long)tmp2.get(1);
-                long   s = get + 1 - 2;
-                //long s = count[i] + get -2;
-                tmp2.set(1,Long.valueOf(s));
-                
-                
-                }
-                
-            }
-        
-        //ADDING IN TO TABLE    
-        for (int i = 0; i < psize; i++)
-            {
-                
-                tmp = new ArrayList();
-                
-                
-                if(MaliciousAlready(to,pnode[i]) == -1)
-                {
-                tmp2 = new ArrayList();
-                tmp2.add(pnode[i]);
-                tmp2.add(Long.valueOf(1));
-                to.MaliciousNodes.add(tmp2);                  
-                }
-                
-                else 
-                {
-                tmp2 = new ArrayList();
-                int tt = MaliciousAlready(to,pnode[i]);
-                
-                tmp2 = (ArrayList) to.MaliciousNodes.get(tt);
-                long get = (long)tmp2.get(1);
-                long   s = get + 1 - 2;
-                //long s = pcount[i] + get - 2 ;
-                
-                tmp2.set(1,Long.valueOf(s));
-                
-                
-                }
-                
-        
-            }
+            else 
+                from.MaliciousInfo.put(key,1);
+         }
+         
+         //ADDING IN TO TABLE
+         for (DTNHost key : from.MaliciousInfo.keySet())
+         {
+            if(to.MaliciousInfo.containsKey(key))
+                to.MaliciousInfo.put(key,(int)to.MaliciousInfo.get(key)+1);
+            
+            else 
+                to.MaliciousInfo.put(key,1);
+         }
         }
         
         
@@ -1077,450 +780,77 @@ public class DTNHost implements Comparable<DTNHost> {
                                     if(this.router.getMessage(m.id) == temp.get(y) && temp.size() > 4) 
                                      {
                                         if(y ==0 || y == 1) router.deleteMessage(m.id,true);
-                                        //System.out.println("---------------------------------------------NODE "+n.name+"  DROPPED MESSAGE "+m.id+"------------------------------------------");
+                                        System.out.println("---------------------------------------------NODE "+n.name+"  DROPPED MESSAGE "+m.id+"------------------------------------------");
                                      }
                                  }
         }
         
-        public void centralizedAuthority(DTNHost from,DTNHost to,String id)
-        {
-            ArrayList tmp = new ArrayList();
-            
-            TAs.add(World.getNodeByAddress(5));
-            TAs.add(World.getNodeByAddress(15));
-            TAs.add(World.getNodeByAddress(25));
-            TAs.add(World.getNodeByAddress(35));
-            TAs.add(World.getNodeByAddress(45));
-            TAs.add(World.getNodeByAddress(55));
-            TAs.add(World.getNodeByAddress(65));
-            TAs.add(World.getNodeByAddress(75));
-            TAs.add(World.getNodeByAddress(85));
-            TAs.add(World.getNodeByAddress(95));
-            TAs.add(World.getNodeByAddress(105));
-            TAs.add(World.getNodeByAddress(115));
-            TAs.add(World.getNodeByAddress(125));
-            TAs.add(World.getNodeByAddress(135));
-            TAs.add(World.getNodeByAddress(145));
-            TAs.add(World.getNodeByAddress(155));
-            TAs.add(World.getNodeByAddress(165));
-            TAs.add(World.getNodeByAddress(175));
-            TAs.add(World.getNodeByAddress(185));
-            TAs.add(World.getNodeByAddress(195));
-            
-            String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
-
-            tmp.add(id);
-            tmp.add(timeStamp);
-            tmp.add(from);
-            tmp.add(to);
-            
-  if((from.getAddress() >= 0 && from.getAddress() <=9) || (to.getAddress() >= 0 && to.getAddress() <=9))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(0);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }
- 
-   if((from.getAddress() >= 10 && from.getAddress() <=19) || (to.getAddress() >= 10 && to.getAddress() <=19))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(1);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }      
-    if((from.getAddress() >= 20 && from.getAddress() <=29) || (to.getAddress() >= 20 && to.getAddress() <=29))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(2);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }      
-    if((from.getAddress() >= 30 && from.getAddress() <=39) || (to.getAddress() >= 30 && to.getAddress() <=39))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(3);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }      
-    if((from.getAddress() >= 40 && from.getAddress() <=49) || (to.getAddress() >= 40 && to.getAddress() <=49))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(4);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }      
-    if((from.getAddress() >= 50 && from.getAddress() <=59) || (to.getAddress() >= 50 && to.getAddress() <=59))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(5);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }     
-    
-     if((from.getAddress() >= 60 && from.getAddress() <=69) || (to.getAddress() >= 60 && to.getAddress() <=69))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(6);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-      if((from.getAddress() >= 70 && from.getAddress() <=79) || (to.getAddress() >= 70 && to.getAddress() <=79))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(7);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-       if((from.getAddress() >= 80 && from.getAddress() <=89) || (to.getAddress() >= 80 && to.getAddress() <=89))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(8);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-        if((from.getAddress() >= 90 && from.getAddress() <=99) || (to.getAddress() >= 90 && to.getAddress() <=99))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(9);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-        if((from.getAddress() >= 100 && from.getAddress() <=109) || (to.getAddress() >= 100 && to.getAddress() <=109))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(10);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-         if((from.getAddress() >= 110 && from.getAddress() <=119) || (to.getAddress() >= 110 && to.getAddress() <=119))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(11);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-          if((from.getAddress() >= 120 && from.getAddress() <=129) || (to.getAddress() >= 120 && to.getAddress() <=129))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(12);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-           if((from.getAddress() >= 130 && from.getAddress() <=139) || (to.getAddress() >= 130 && to.getAddress() <=139))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(13);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-            if((from.getAddress() >= 140 && from.getAddress() <=149) || (to.getAddress() >= 140 && to.getAddress() <=149))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(14);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-             if((from.getAddress() >= 150 && from.getAddress() <=159) || (to.getAddress() >= 150 && to.getAddress() <=159))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(15);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-              if((from.getAddress() >= 160 && from.getAddress() <=169) || (to.getAddress() >= 160 && to.getAddress() <=169))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(16);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-               if((from.getAddress() >= 170 && from.getAddress() <=179) || (to.getAddress() >= 170 && to.getAddress() <=179))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(17);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-                if((from.getAddress() >= 180 && from.getAddress() <=189) || (to.getAddress() >= 180 && to.getAddress() <=189))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(18);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-                 if((from.getAddress() >= 190 && from.getAddress() <=199) || (to.getAddress() >= 190 && to.getAddress() <=199))
-            
-  {
-                DTNHost tmp1 = (DTNHost)TAs.get(19);
-                
-                if(!isFound(tmp1,tmp))
-                {
-                    tmp1.MsgInfo.add(tmp);
-                    NodeInfoUpdate(tmp1);
-                }
-  }    
-         
-       
-            /*
-            for(int i = 0; i < TAs.size(); i++)
-            {
-                DTNHost tmp1 = (DTNHost)TAs.get(i);
-                for(int j = i+1; j < TAs.size(); j++)
-                {
-                    DTNHost tmp2 = (DTNHost)TAs.get(j);
-                    getAllMsgs(tmp1,tmp2);
-                }
-            }
-            for(int i = 0; i < TAs.size(); i++)
-            {
-                DTNHost tmp1 = (DTNHost)TAs.get(i);
-                for(int j = i+1; j < TAs.size(); j++)
-                {
-                    DTNHost tmp2 = (DTNHost)TAs.get(j);
-                    ShareMaliciousTables(tmp1,tmp2);
-                }
-            }
-            */
-            //System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
-  
-            for(int i = 0; i < TAs.size(); i++)
-            {
-            DTNHost tmp1 = (DTNHost)TAs.get(i);
-            //System.out.println("MALICIOUS INFO TABLE OF NODE: "+tmp1);    
-                
-               
-                    for(int j = 0; j < tmp1.MaliciousNodes.size(); j++)
-                        {
-                        ArrayList a = (ArrayList)tmp1.MaliciousNodes.get(j);
-                        double    s = SimClock.getTime()/1000.0; 
-                        int       m = (int)a.get(0);    
-                        if(flag[m] == false)
-                            {
-                            System.out.println(a);
-                            System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
-                            flag[m]=true;
-                            }
-                        }
-                
-            }
-            
-        }
-   
-        public void messageTransferred(String id, DTNHost from) 
+        public void messageTransferred(String id, DTNHost from) throws IOException 
         {
    
             DTNHost to = this.router.getHost();
-            
             ArrayList tmp = new ArrayList();
             ArrayList tmp2 = new ArrayList();
             //String timeStamp = Long.toString(date.getTime());
             String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
-                
-            
-            tmp.add(id);
+
             tmp.add(timeStamp);
             tmp.add(from);
             tmp.add(to);
-    
-            if(!isFound(from,tmp))
-            {
-                from.MsgInfo.add(tmp);
-                NodeInfoUpdate(from);
-            }
-            if(!isFound(to,tmp))  
-            {
-                to.MsgInfo.add(tmp);
-                NodeInfoUpdate(to);
-            }
-                
-            //sortMsgInfo(from);
-            //sortMsgInfo(to);
             
+            from.MessageInfo.put(id,tmp);
+            NodeInfoUpdate(from,id);
+            
+            to.MessageInfo.put(id,tmp);
+            NodeInfoUpdate(to,id);
             
             
             getAllMsgs(from,to);
             
-            //NodeInfoUpdate(from);
-            //NodeInfoUpdate(to);
-            DTNHost[] test  = new DTNHost[1000000];
-            DTNHost[] test1 = new DTNHost[1000000];
-            double[] FTT = new double[100000];
-            double[] RTT = new double[100000];
-            System.out.println();
-            System.out.println("GETTING WITHIN RANGE: "+from+"->"+to);
-            //System.out.println("RATIO THRESHOLD: "+ RatioThreshold);
-            //System.out.println("SUM THRESHOLD: "+ SumThreshold);
+            
+            br.newLine();
+            br.write(id+" MSG TRANSMISSION");
+            br.write("GETTING WITHIN RANGE: "+from+"->"+to);
             
             //MSG INFO
+            /*
             System.out.println();
             System.out.println("MSG INFO TABLE OF NODE: "+from);
-            for(int j = 0; j < from.MsgInfo.size(); j++)System.out.println(from.MsgInfo.get(j));
+            System.out.println(from.MessageInfo);
+            
             System.out.println();
             System.out.println("MSG INFO TABLE OF NODE: "+to);
-            for(int j = 0; j < to.MsgInfo.size(); j++)System.out.println(to.MsgInfo.get(j));
-            
-            
+            System.out.println(to.MessageInfo);
+            */
             
             //NODE INFO
+            /*
             System.out.println();
-            if(from.NodeInfo.size() != 0)
-            {
             System.out.println("NODE INFO TABLE OF NODE: "+from);
-            for( int j = 0; j < from.NodeInfo.size(); j++) 
-            {
-                
-                ArrayList a = (ArrayList)from.NodeInfo.get(j);
-                test[j] = (DTNHost)a.get(0);
-                FTT [j] = (double) a.get(1);
-                RTT [j] = (double) a.get(2);
-                System.out.println(from.NodeInfo.get(j));
-               
-            }
-            }
-            System.out.println();
-            if(to.NodeInfo.size() != 0)
-            {    
+            System.out.println(from.NInfo);
+            
             System.out.println("NODE INFO TABLE OF NODE: "+to);
-            for(int j = 0; j < to.NodeInfo.size(); j++) 
-            {
-                ArrayList a = (ArrayList)to.NodeInfo.get(j);
-                test[j] = (DTNHost)a.get(0);
-                FTT [j] = (double) a.get(1);
-                RTT [j] = (double) a.get(2);
-                
-                 System.out.println(to.NodeInfo.get(j));
-              }
-            }
-            
-            
+            System.out.println(to.NInfo);
             
             //MALICIOUS TABLE
             /*
-            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+from);
-            for(int j = 0; j < from.MaliciousNodes.size(); j++)
-            {
-                System.out.println(from.MaliciousNodes.get(j));
-            }
+            System.out.println("BEFORE SHARING: MALICIOUS INFO TABLE OF NODE: "+from);
+            System.out.println(from.MaliciousInfo);
             
-            
-            System.out.println("BEFORE SHARING: MALICIOUS NODE TABLE OF NODE: "+to);
-            for(int j = 0; j < to.MaliciousNodes.size(); j++)
-            {
-                System.out.println(to.MaliciousNodes.get(j));
-            }
+            System.out.println("BEFORE SHARING: MALICIOUS INFO TABLE OF NODE: "+to);
+            System.out.println(to.MaliciousInfo);
             */
-            
-            
-            ShareMaliciousTables(from,to);  
-            
-            System.out.println();
-            System.out.println("MALICIOUS NODE TABLE OF NODE: "+from);
-            for(int j = 0; j < from.MaliciousNodes.size(); j++)
-            {
-                ArrayList a = (ArrayList)from.MaliciousNodes.get(j);
-                int     node= (int)a.get(0);
-                long      l = (long)a.get(1);
-                if(l >= counter)
-                {
-                    double s= SimClock.getTime()/1000.0; 
-                    System.out.println(a);
-                    //System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
-                }
+            ShareMaliciousTables(from,to); 
+           
+            for(DTNHost key: from.MaliciousInfo.keySet())
+            { 
+                if( from.MaliciousInfo.get(key) == 20 ) br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
             }
             
-            System.out.println();
-            System.out.println("MALICIOUS NODE TABLE OF NODE: "+to);
-            for(int j = 0; j < to.MaliciousNodes.size(); j++)
-            {
-                ArrayList a = (ArrayList)to.MaliciousNodes.get(j);
-                int     node= (int)a.get(0);
-                long      l = (long)a.get(1);
-                if(l >= counter)
-                {
-                     double s= SimClock.getTime()/1000.0; 
-                     System.out.println(a);
-                    // System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
-                }
+            for(DTNHost key: to.MaliciousInfo.keySet())
+            { 
+                if( to.MaliciousInfo.get(key) == 20 )br.write("MALICIOUS NODE: "+key+"FOUND AT: "+SimClock.getTime()/1000.0);
             }
-            
-            
             
             
             this.router.messageTransferred(id, from);
