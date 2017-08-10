@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <P>
@@ -59,13 +62,17 @@ public class EpidemicOracleRouter extends ActiveRouter {
 			for (Message m : newMessages) {
 				/* try to start transfer from peer */
 				if (con.startTransfer(peer, m) == RCV_OK) {
-					con.finalizeTransfer(); /* and finalize it right away */
+                                    try {
+                                        con.finalizeTransfer(); /* and finalize it right away */
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(EpidemicOracleRouter.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
 				}
 			}
 		}
 	}
 
-	private void sendMessageToConnected(Message m) {
+	private void sendMessageToConnected(Message m) throws IOException {
 		DTNHost host = getHost();
 		
 		for (Connection c : getConnections()) {
@@ -82,7 +89,11 @@ public class EpidemicOracleRouter extends ActiveRouter {
 			throw new SimError("Can't create message " + m);
 		}
 
-		sendMessageToConnected(m);
+            try {
+                sendMessageToConnected(m);
+            } catch (IOException ex) {
+                Logger.getLogger(EpidemicOracleRouter.class.getName()).log(Level.SEVERE, null, ex);
+            }
 		
 		return true;
 	}
@@ -116,7 +127,11 @@ public class EpidemicOracleRouter extends ActiveRouter {
 				}
 			}
 		} else {
-			sendMessageToConnected(m);
+                    try {
+                        sendMessageToConnected(m);
+                    } catch (IOException ex) {
+                        Logger.getLogger(EpidemicOracleRouter.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 		}
 		
 		return m;
