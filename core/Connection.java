@@ -4,6 +4,7 @@
  */
 package core;
 
+import java.io.IOException;
 import routing.MessageRouter;
 
 /**
@@ -121,7 +122,7 @@ public abstract class Connection {
 	 * retrieved from this connections after calling this method (using
 	 * {@link #getMessage()}).
 	 */
-	public void finalizeTransfer() {
+	public void finalizeTransfer() throws IOException {
 		assert this.msgOnFly != null : "Nothing to finalize in " + this;
 		assert msgFromNode != null : "msgFromNode is not set";
 		
