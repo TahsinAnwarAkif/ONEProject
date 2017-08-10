@@ -78,8 +78,8 @@ public class DTNHost implements Comparable<DTNHost> {
         public static String fileName;
         public static FileOutputStream fs;
         public static BufferedWriter br;
+        public static boolean[] flag;
         public ArrayList TAs  = new ArrayList() ;
-        public static boolean[] flag = new boolean[1000];;
       
 	static {
 		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
@@ -91,6 +91,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 Logger.getLogger(DTNHost.class.getName()).log(Level.SEVERE, null, ex);
             }
                 br = new BufferedWriter(new OutputStreamWriter(fs));
+                flag = new boolean[1000];
 	}
 	/**
          * 
@@ -806,11 +807,8 @@ public class DTNHost implements Comparable<DTNHost> {
             
             
             getAllMsgs(from,to);
-            
-            
-            br.newLine();
-            br.write(id+" MSG TRANSMISSION");
-            br.write("GETTING WITHIN RANGE: "+from+"->"+to);
+ 
+            //br.write("GETTING WITHIN RANGE: "+from+"->"+to);
             
             //MSG INFO
             /*
@@ -844,12 +842,22 @@ public class DTNHost implements Comparable<DTNHost> {
            
             for(DTNHost key: from.MaliciousInfo.keySet())
             { 
-                if( from.MaliciousInfo.get(key) == 20 ) br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
+                if( from.MaliciousInfo.get(key) == 20 && flag[from.getAddress()] == false ) 
+                {
+                    flag[from.getAddress()] = true;
+                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
+                    br.newLine();
+                }
             }
             
             for(DTNHost key: to.MaliciousInfo.keySet())
             { 
-                if( to.MaliciousInfo.get(key) == 20 )br.write("MALICIOUS NODE: "+key+"FOUND AT: "+SimClock.getTime()/1000.0);
+                if( to.MaliciousInfo.get(key) == 20 && flag[to.getAddress()] == false )
+                {
+                    flag[to.getAddress()] = true;
+                    br.write("MALICIOUS NODE: "+key+"FOUND AT: "+SimClock.getTime()/1000.0);
+                    br.newLine();
+                }
             }
             
             
