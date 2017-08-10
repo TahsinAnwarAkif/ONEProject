@@ -851,7 +851,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 if( from.MaliciousInfo.get(key) == 20 && flag[from.getAddress()] == false ) 
                 {
                     flag[from.getAddress()] = true;
-                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0+"FLAG STATUS: "+flag[from.getAddress()]);
+                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
                     br.newLine();               
                     br.flush();
                 }
@@ -862,7 +862,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 if( to.MaliciousInfo.get(key) == 20 && flag[to.getAddress()] == false )
                 {
                     flag[to.getAddress()] = true;
-                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0 +"FLAG STATUS: "+flag[to.getAddress()]);
+                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
                     br.newLine();
                     br.flush();
                 }
