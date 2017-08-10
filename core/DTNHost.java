@@ -82,8 +82,9 @@ public class DTNHost implements Comparable<DTNHost> {
         public ArrayList TAs  = new ArrayList() ;
       
 	static {
-		DTNSim.registerForReset(DTNHost.class.getCanonicalName());
+                DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
+                flag = new boolean[1000];
                 fileName = "G:\\One Simulator\\out" + ".txt";
             try {
                 fs = new FileOutputStream(fileName);
@@ -91,7 +92,13 @@ public class DTNHost implements Comparable<DTNHost> {
                 Logger.getLogger(DTNHost.class.getName()).log(Level.SEVERE, null, ex);
             }
                 br = new BufferedWriter(new OutputStreamWriter(fs));
-                flag = new boolean[1000];
+                
+            try {
+                br.write("START:-------");
+                br.newLine();
+            } catch (IOException ex) {
+                Logger.getLogger(DTNHost.class.getName()).log(Level.SEVERE, null, ex);
+            }
 	}
 	/**
          * 
@@ -805,11 +812,8 @@ public class DTNHost implements Comparable<DTNHost> {
             to.MessageInfo.put(id,tmp);
             NodeInfoUpdate(to,id);
             
-            
             getAllMsgs(from,to);
  
-            //br.write("GETTING WITHIN RANGE: "+from+"->"+to);
-            
             //MSG INFO
             /*
             System.out.println();
@@ -839,14 +843,17 @@ public class DTNHost implements Comparable<DTNHost> {
             System.out.println(to.MaliciousInfo);
             */
             ShareMaliciousTables(from,to); 
-           
+            br.flush();
+            
+            
             for(DTNHost key: from.MaliciousInfo.keySet())
             { 
                 if( from.MaliciousInfo.get(key) == 20 && flag[from.getAddress()] == false ) 
                 {
                     flag[from.getAddress()] = true;
-                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
-                    br.newLine();
+                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0+"FLAG STATUS: "+flag[from.getAddress()]);
+                    br.newLine();               
+                    br.flush();
                 }
             }
             
@@ -855,8 +862,9 @@ public class DTNHost implements Comparable<DTNHost> {
                 if( to.MaliciousInfo.get(key) == 20 && flag[to.getAddress()] == false )
                 {
                     flag[to.getAddress()] = true;
-                    br.write("MALICIOUS NODE: "+key+"FOUND AT: "+SimClock.getTime()/1000.0);
+                    br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0 +"FLAG STATUS: "+flag[to.getAddress()]);
                     br.newLine();
+                    br.flush();
                 }
             }
             
