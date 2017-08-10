@@ -6,6 +6,9 @@ package input;
 
 import core.DTNHost;
 import core.World;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * External event for all the stages of relaying a message between two
@@ -51,7 +54,13 @@ public class MessageRelayEvent extends MessageEvent {
 			from.sendMessage(id, to);
 			break;
 		case TRANSFERRED:
-			to.messageTransferred(id, from); 
+                { 
+                    try {
+                        to.messageTransferred(id, from);
+                    } catch (IOException ex) {
+                        Logger.getLogger(MessageRelayEvent.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
 			break;
 		case ABORTED:
 			to.messageAborted(id, from, -1);
