@@ -17,6 +17,9 @@ import core.MessageListener;
 import core.Settings;
 import core.SimClock;
 import core.Tuple;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Superclass of active routers. Contains convenience methods (e.g. 
@@ -550,7 +553,11 @@ public abstract class ActiveRouter extends MessageRouter {
 			if (con.isMessageTransferred()) {
 				if (con.getMessage() != null) {
 					transferDone(con);
-					con.finalizeTransfer();
+                                    try {
+                                        con.finalizeTransfer();
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(ActiveRouter.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
 				} /* else: some other entity aborted transfer */
 				removeCurrent = true;
 			}
