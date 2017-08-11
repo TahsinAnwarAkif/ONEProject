@@ -1,0 +1,302 @@
+/*
+        public void centralizedAuthority(DTNHost from,DTNHost to,String id)
+        {
+            ArrayList tmp = new ArrayList();
+            
+            TAs.add(World.getNodeByAddress(5));
+            TAs.add(World.getNodeByAddress(15));
+            TAs.add(World.getNodeByAddress(25));
+            TAs.add(World.getNodeByAddress(35));
+            TAs.add(World.getNodeByAddress(45));
+            TAs.add(World.getNodeByAddress(55));
+            TAs.add(World.getNodeByAddress(65));
+            TAs.add(World.getNodeByAddress(75));
+            TAs.add(World.getNodeByAddress(85));
+            TAs.add(World.getNodeByAddress(95));
+            TAs.add(World.getNodeByAddress(105));
+            TAs.add(World.getNodeByAddress(115));
+            TAs.add(World.getNodeByAddress(125));
+            TAs.add(World.getNodeByAddress(135));
+            TAs.add(World.getNodeByAddress(145));
+            TAs.add(World.getNodeByAddress(155));
+            TAs.add(World.getNodeByAddress(165));
+            TAs.add(World.getNodeByAddress(175));
+            TAs.add(World.getNodeByAddress(185));
+            TAs.add(World.getNodeByAddress(195));
+            
+            String timeStamp = new SimpleDateFormat("HH.mm.ss").format(new java.util.Date());
+
+            tmp.add(id);
+            tmp.add(timeStamp);
+            tmp.add(from);
+            tmp.add(to);
+            
+  if((from.getAddress() >= 0 && from.getAddress() <=9) || (to.getAddress() >= 0 && to.getAddress() <=9))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(0);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }
+ 
+   if((from.getAddress() >= 10 && from.getAddress() <=19) || (to.getAddress() >= 10 && to.getAddress() <=19))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(1);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 20 && from.getAddress() <=29) || (to.getAddress() >= 20 && to.getAddress() <=29))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(2);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 30 && from.getAddress() <=39) || (to.getAddress() >= 30 && to.getAddress() <=39))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(3);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 40 && from.getAddress() <=49) || (to.getAddress() >= 40 && to.getAddress() <=49))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(4);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }      
+    if((from.getAddress() >= 50 && from.getAddress() <=59) || (to.getAddress() >= 50 && to.getAddress() <=59))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(5);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }     
+    
+     if((from.getAddress() >= 60 && from.getAddress() <=69) || (to.getAddress() >= 60 && to.getAddress() <=69))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(6);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+      if((from.getAddress() >= 70 && from.getAddress() <=79) || (to.getAddress() >= 70 && to.getAddress() <=79))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(7);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+       if((from.getAddress() >= 80 && from.getAddress() <=89) || (to.getAddress() >= 80 && to.getAddress() <=89))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(8);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+        if((from.getAddress() >= 90 && from.getAddress() <=99) || (to.getAddress() >= 90 && to.getAddress() <=99))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(9);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+        if((from.getAddress() >= 100 && from.getAddress() <=109) || (to.getAddress() >= 100 && to.getAddress() <=109))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(10);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+         if((from.getAddress() >= 110 && from.getAddress() <=119) || (to.getAddress() >= 110 && to.getAddress() <=119))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(11);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+          if((from.getAddress() >= 120 && from.getAddress() <=129) || (to.getAddress() >= 120 && to.getAddress() <=129))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(12);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+           if((from.getAddress() >= 130 && from.getAddress() <=139) || (to.getAddress() >= 130 && to.getAddress() <=139))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(13);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+            if((from.getAddress() >= 140 && from.getAddress() <=149) || (to.getAddress() >= 140 && to.getAddress() <=149))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(14);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+             if((from.getAddress() >= 150 && from.getAddress() <=159) || (to.getAddress() >= 150 && to.getAddress() <=159))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(15);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+              if((from.getAddress() >= 160 && from.getAddress() <=169) || (to.getAddress() >= 160 && to.getAddress() <=169))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(16);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+               if((from.getAddress() >= 170 && from.getAddress() <=179) || (to.getAddress() >= 170 && to.getAddress() <=179))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(17);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+                if((from.getAddress() >= 180 && from.getAddress() <=189) || (to.getAddress() >= 180 && to.getAddress() <=189))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(18);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+                 if((from.getAddress() >= 190 && from.getAddress() <=199) || (to.getAddress() >= 190 && to.getAddress() <=199))
+            
+  {
+                DTNHost tmp1 = (DTNHost)TAs.get(19);
+                
+                if(!isFound(tmp1,tmp))
+                {
+                    tmp1.MsgInfo.add(tmp);
+                    NodeInfoUpdate(tmp1);
+                }
+  }    
+         
+       
+            
+            for(int i = 0; i < TAs.size(); i++)
+            {
+                DTNHost tmp1 = (DTNHost)TAs.get(i);
+                for(int j = i+1; j < TAs.size(); j++)
+                {
+                    DTNHost tmp2 = (DTNHost)TAs.get(j);
+                    getAllMsgs(tmp1,tmp2);
+                }
+            }
+            for(int i = 0; i < TAs.size(); i++)
+            {
+                DTNHost tmp1 = (DTNHost)TAs.get(i);
+                for(int j = i+1; j < TAs.size(); j++)
+                {
+                    DTNHost tmp2 = (DTNHost)TAs.get(j);
+                    ShareMaliciousTables(tmp1,tmp2);
+                }
+            }
+            
+            //System.out.println(id +" MSG TRANSMISSION: "+from+"->"+to);
+  
+            for(int i = 0; i < TAs.size(); i++)
+            {
+            DTNHost tmp1 = (DTNHost)TAs.get(i);
+            //System.out.println("MALICIOUS INFO TABLE OF NODE: "+tmp1);    
+                
+               
+                    for(int j = 0; j < tmp1.MaliciousNodes.size(); j++)
+                        {
+                        ArrayList a = (ArrayList)tmp1.MaliciousNodes.get(j);
+                        double    s = SimClock.getTime()/1000.0; 
+                        int       m = (int)a.get(0);    
+                        if(flag[m] == false)
+                            {
+                            System.out.println(a);
+                            System.out.println("MALICIOUS NODE FOUND AT: "+s+" SECONDS");
+                            flag[m]=true;
+                            }
+                        }
+                
+            }
+            
+        }
+        */
