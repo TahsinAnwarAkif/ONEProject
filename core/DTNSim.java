@@ -98,6 +98,10 @@ public class DTNSim {
 			Settings.setRunIndex(guiIndex);
 			new DTNSimGUI().start();
 		}
+                //double avg = DTNHost.count / 16;
+                //DTNHost.br.write("AVERAGE MINIMUM DISCOVERY TIME: "+avg);
+                //DTNHost.br.flush();
+                //DTNHost.br.close();
 	}
 	
 	/**
