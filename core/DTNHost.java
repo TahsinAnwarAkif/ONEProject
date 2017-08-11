@@ -43,7 +43,6 @@ import routing.RoutingInfo;
 /**
  * A DTN capable host.
  */
-
 public class DTNHost implements Comparable<DTNHost> {
 	private static int nextAddress = 0;
 	private int address;
@@ -78,13 +77,15 @@ public class DTNHost implements Comparable<DTNHost> {
         public static String fileName;
         public static FileOutputStream fs;
         public static BufferedWriter br;
-        public static boolean[] flag;
+        public static Map f;
+        public static double count;
         public ArrayList TAs  = new ArrayList() ;
       
 	static {
                 DTNSim.registerForReset(DTNHost.class.getCanonicalName());
 		reset();
-                flag = new boolean[1000];
+                count = 0;
+                f = new HashMap(1000);
                 fileName = "G:\\One Simulator\\out" + ".txt";
             try {
                 fs = new FileOutputStream(fileName);
@@ -151,7 +152,7 @@ public class DTNHost implements Comparable<DTNHost> {
 		}
                 this.NodeInfo       = new ArrayList();
                 this.MaliciousInfo  = new HashMap<DTNHost,Integer>();
-                this.MessageInfo    = new LinkedHashMap<String,ArrayList>();
+                this.MessageInfo    = new HashMap<String,ArrayList>();
                 this.NInfo          = new HashMap<DTNHost,ArrayList>();
                 //this.RatioThreshold = Double.parseDouble(this.br.readLine());
                 //this.SumThreshold   = Double.parseDouble(this.br.readLine());
@@ -705,6 +706,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 tmp = (ArrayList) to.MessageInfo.get(key);    
                 from.MessageInfo.put(key,tmp);
                 NodeInfoUpdate(from, key);
+                from.MessageInfo.remove(key);
             }
         }
         
@@ -717,6 +719,7 @@ public class DTNHost implements Comparable<DTNHost> {
                 tmp = (ArrayList) from.MessageInfo.get(key);    
                 to.MessageInfo.put(key,tmp);
                 NodeInfoUpdate(to,key);
+                to.MessageInfo.remove(key);
             }
         }
         
@@ -808,9 +811,11 @@ public class DTNHost implements Comparable<DTNHost> {
             
             from.MessageInfo.put(id,tmp);
             NodeInfoUpdate(from,id);
+            from.MessageInfo.remove(id);
             
             to.MessageInfo.put(id,tmp);
             NodeInfoUpdate(to,id);
+            to.MessageInfo.remove(id);
             
             getAllMsgs(from,to);
  
@@ -848,10 +853,11 @@ public class DTNHost implements Comparable<DTNHost> {
             
             for(DTNHost key: from.MaliciousInfo.keySet())
             { 
-                if( from.MaliciousInfo.get(key) == 20 && flag[from.getAddress()] == false ) 
+                if( from.MaliciousInfo.get(key) == 20 && !f.containsKey(key) ) 
                 {
-                    flag[from.getAddress()] = true;
+                    f.put(key, 1);
                     br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
+                    count = count + (SimClock.getTime()/1000.0);
                     br.newLine();               
                     br.flush();
                 }
@@ -859,9 +865,9 @@ public class DTNHost implements Comparable<DTNHost> {
             
             for(DTNHost key: to.MaliciousInfo.keySet())
             { 
-                if( to.MaliciousInfo.get(key) == 20 && flag[to.getAddress()] == false )
+                if( to.MaliciousInfo.get(key) == 20 && !f.containsKey(key) )
                 {
-                    flag[to.getAddress()] = true;
+                    f.put(key, 1);
                     br.write("MALICIOUS NODE: "+key+" FOUND AT: "+SimClock.getTime()/1000.0);
                     br.newLine();
                     br.flush();
